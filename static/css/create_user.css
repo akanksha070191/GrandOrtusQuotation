@@ -1,0 +1,77 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html{
+    font-size: 62.5%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.container{
+    display: flex;
+    flex-direction: column;
+    row-gap: 2rem;
+    border: 1px solid grey;
+    border-radius: 5px;
+    box-shadow: 2px 2px rgba(0, 0, 0, 0.227);
+    width: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    padding: 2rem;
+}
+.container h1{
+    text-align: center;
+}
+
+.form-class{
+    display: flex;
+    flex-direction: column;
+    row-gap: 1.2rem;
+    margin: 0 auto;
+}
+.form-item{
+    font-size: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.4rem;
+}
+.form-item input{
+    background-color: transparent;
+    border: 1px solid darkcyan;
+    border-radius: 2px;
+    padding: 0.5rem;
+}
+.form-style{
+    background-color: darkcyan;
+    border: 1px solid darkcyan;
+    border-radius: 2px;
+    padding: 0.5rem;
+}
+.form-login-area{
+    display: flex; 
+    column-gap: 1rem;   
+}
+.form-login-area li{
+    list-style: none;
+    
+}
+li a{
+    text-decoration: none;
+    color: black;
+}
+
+
+li.success{
+    list-style: none;
+    font-size: 1rem;
+    background-color: darkcyan;
+    border-radius: 2px;
+    padding: 0.5rem;
+    color: white;
+}
+button:hover{
+    background-color: darkcyan;
+    color: white;
+}

@@ -1,0 +1,161 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html{
+    font-size: 62.5%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.header{
+    padding: 1rem;
+    margin: 0 auto;
+}
+.header h1{
+    color: darkcyan;
+    
+}
+.container{
+    display: flex;
+    flex-direction: column;
+    row-gap: 1.5rem;
+}
+.form-class, .form2-class{
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+.form-item{
+    display: grid;
+    grid-template-columns: repeat(2, 2fr);
+    padding: 1.5rem;
+}
+#columnForm{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    row-gap: 1rem;
+    
+}
+input[type="checkbox"]{
+    padding-right: 0.5rem;
+    width: 15px;
+    height: 15px;
+    accent-color: darkcyan;
+}
+#clearCheckboxBox{
+    width: 30%;
+    background-color: darkcyan;
+    border: 2px solid darkcyan;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+#clearCheckboxBox:hover{
+    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.278);
+}
+.checkbox-space{
+    display:flex;
+    flex-direction: column;
+    row-gap: 1rem;
+}
+.form-item input{
+    padding: 0.2rem;
+}
+table {
+    width: 100%;
+    border-collapse: separate;
+
+}
+table, th, td {
+    border: 1px solid black;
+}
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+th{
+    background-color: darkcyan;
+    color: white;
+}
+.quotationformat{
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+    
+}
+a{
+    text-decoration: none;
+    color: black;
+}
+.footer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 1rem;
+    margin-bottom: 2rem;
+
+}
+.button-style{
+    padding: 0.8rem;
+    font-size: 1.5rem;
+    background-color: darkcyan;
+    border: 1px solid green;
+    border-radius: 5px;
+    color: white;
+    margin-bottom: 2rem;
+    
+}
+.button-style:hover{
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.218)
+}
+.opt-for{
+    display: flex;
+    column-gap: 2rem;
+    justify-content: center;
+    align-items: center;
+}
+.opt-for h1{
+    padding-bottom: 2rem;
+    color: rgba(0, 0, 0, 0.408);
+}
+.opt-forButton{
+    padding: 0.8rem;
+    font-size: 1.5rem;
+    background-color: darkcyan;
+    border: 1px solid green;
+    border-radius: 5px;
+    color: white;
+    margin-bottom: 2rem;
+}
+.autocomplate-list{
+    list-style: none;
+    padding: unset;
+    margin: unset;
+}
+.autocomplate-list button{
+    border: unset;
+    background-color: unset;
+}
+button{
+    cursor: pointer;
+}
+.autocomplate-list li{
+    border: 1px solid grey;
+    border-radius: 2px;
+    border-top: unset;
+    padding: 0.2em;
+}
+.autocomplate-list button{
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+.autocomplate-list li:hover{
+    background-color: rgba(230, 230, 230, 0.306);
+}
+
+

@@ -1,0 +1,26 @@
+.error-style{
+    display: flex;
+    flex-direction: column;
+    row-gap: 2rem;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    color: cadetblue;
+}
+
+.footer_style{
+    background-color: #2596be;
+    border-radius: 5px;
+    border: 1px solid darkcyan;
+    color: white;
+    font-size: 1.3rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    width: 80px;
+    text-align: center;
+}
+
+a{
+    text-decoration: none;
+    list-style: none;
+}

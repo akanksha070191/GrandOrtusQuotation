@@ -1,0 +1,352 @@
+{% load dynamic_filters %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="static/js/quotation.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    
+    
+    <link rel="stylesheet" href="static/css/generateQuotation.css">
+    <title></title>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="company_logo">
+                <img src="static/images/Grand Ortus _BG_.png" alt="" height="60px">
+            </div>
+            <div class="company_address">
+                    <div class="grid-item">Address:</div>
+                    <div class="grid-item-data">D14/31 2ndFloor Ardee City, Gurugram <br>          
+                        Haryana,122003
+                    </div>  
+                    <div class="grid-item">Email:</div>
+                    <div class="grid-item-data">info@grandortus.com</div>
+                    <div class="grid-item">Phone:</div>
+                    <div class="grid-item-data">+911244233760</div>
+                    <div class="grid-item">GST Number:</div>
+                    <div class="grid-item-data">06AAICG1259L1ZE</div>
+                    <div class="grid-item">PAN Number:</div>
+                    <div class="grid-item-data">AAICG1259L</div>
+                           
+            </div>
+        </div>
+        <div class="header-part2">
+            <div class="client-details">
+                <div class="grid-item">Customer:</div>
+                    <div class="grid-item-data">          
+                        {{companyName}}
+                    </div>  
+                    <div class="grid-item">Address:</div>
+                    <div class="grid-item-data">{{ companyAddress }}</div>
+                    <div class="grid-item">GST Number:</div>
+                    <div class="grid-item-data">{{ companyGST }}</div>
+                    <div class="grid-item">Payment Terms:</div>
+                    <div class="grid-item-data">{{ companyPayment }}</div>              
+            </div>
+            <div class="other-details">
+                <div class="grid-item">Date:</div>
+                <div class="grid-item-data">{{ date }}</div>
+                <div class="grid-item">Quotation No.:</div>
+                <div class="grid-item-data">{{companyQuotationNo}}</div>
+                <div class="grid-item">Valid Untill:</div>
+                <div class="grid-item-data">{{pricevalidtill}}</div>
+                <div class="grid-item">Project</div>
+                <div class="grid-item-data">{{ quotationFor }} Project</div>
+            </div>
+        </div>
+        <div class="table_content">
+            {% if quotationType == 'Subscription/Licence' %}
+            {% for year,  data in data_by_year_difference.items %}
+            <table>
+                <thead>
+                    <div class="quotationHeading">
+                        <h2>Quotation for {{ quotationFor }} with {{ quotationType }} of {{ year }} year</h2>
+                    </div>
+                    <tr>
+                        {% for column in column_names %}
+                            <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>               
+                </thead>
+                <tbody>
+                     {% for row in data.rows %}
+                         <tr>
+                            {% for column in column_names %}
+                                <td>{{ row|get_attr:column }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %} 
+                </tbody>
+            </table> 
+             
+            <div class="finalDataBox">
+                <div class="empty">
+    
+                </div>
+                <div class="data">
+                    <div class="final-item">Sub Total Price</div>
+                    <div class="final-item-data">{{ data.subtotal }}</div>
+                    <div class="final-item">GST Extra {{ companyGSTApply }}%</div>
+                    <div class="final-item-data">{{ data.gst }}</div>
+                    <div class="final-item">Total Amount</div>
+                    <div class="final-item-data">{{ data.total_with_gst }}</div>
+            
+                </div>               
+            </div>
+            {% endfor %}
+
+            {% for year,  data in data_by_year.items  %}
+            {% for row in data %}
+                {% if quotationType == 'Subscription/Licence' and 'USD' in row.USD_Price %}
+                    <table>
+                        <thead>
+                            <div class="quotationHeading">
+                                <h2>Quotation for {{ quotationFor }} with {{ quotationType }} of {{ year }} year</h2>
+                            </div>
+                            <tr>
+                                {% for column in column_names %}
+                                    <th>{{ column }}</th>
+                                {% endfor %}
+                            </tr>               
+                        </thead>
+                        <tbody>
+                            <tr>
+                                {% for column in column_names %}
+                                    {% if column == 'Total Amount' %}
+                                        <td>{{ row|get_attr:column }} USD</td>
+                                    {% else %}
+                                        <td>{{ row|get_attr:column }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                        </tbody>
+                    </table> 
+                {% endif %}
+                
+            {% endfor %}   
+            {% endfor %}   
+            {% elif quotationType == 'BOQ' %}
+                    {% if groupData %}
+                    {% for lot, data in groupData.items  %}
+                    <table>
+                        <thead>
+                            <div class="quotationHeading">
+                                <h2>Quotation for {{ quotationFor }} with {{ quotationType }}</h2>
+                            </div>
+                            <tr>
+                                {% for column in column_names %}
+                                    <th style="border-right: 1px solid black;">{{ column }}</th>
+                                {% endfor %}
+                            </tr>               
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <!-- Now loop over the remaining columns for the first row only -->
+                                {% for column in column_names %}
+                                    {% if column != 'Lot' and column != 'Price' and column != 'Total Amount' %}
+                                        <td style="border: 1px solid black;">{{ data.rows.0|get_attr:column }}</td>
+                                    {% endif %}
+                                {% endfor %}
+                                <!-- Display merged cells for lot, totalPrice, and totalAmount only once at the start of each lot group -->
+                                <td rowspan="{{ data.rowCount }}" style="border: 1px solid black; text-align: center;">{{ lot }}</td>
+                                <td rowspan="{{ data.rowCount }}" style="border: 1px solid black; text-align: center;">{{ data.totalPrice }}</td>
+                                <td rowspan="{{ data.rowCount }}" style="border: 1px solid black; text-align: center;">{{ data.totalAmount }}</td>
+                
+                            </tr>
+                
+                            <!-- Loop over the remaining rows in the lot group without the merged columns -->
+                            {% for row in data.rows|slice:"1:" %}
+                                <tr>
+                                    {% for column in column_names %}
+                                        {% if column != 'Lot' and column != 'Price' and column != 'Total Amount' %}
+                                            <td style="border: 1px solid black;">{{ row|get_attr:column }}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                             
+                        </tbody>
+                    </table> 
+                     
+                    <div class="finalDataBox">
+                        <div class="empty">
+            
+                        </div>
+                        <div class="data">
+                            <div class="final-item">Sub Total Price</div>
+                            <div class="final-item-data">{{ data.totalAmount }}</div>
+                            <div class="final-item">GST Extra {{ companyGSTApply }}%</div>
+                            <div class="final-item-data">{{ data.gst }}</div>
+                            <div class="final-item">Total Amount</div>
+                            <div class="final-item-data">{{ data.total_with_gst }}</div>
+                    
+                        </div>               
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <table>
+                        <thead>
+                            <div class="quotationHeading">
+                                <h2>Quotation for {{ quotationFor }} with {{ quotationType }}</h2>
+                            </div>
+                            <tr>
+                                {% for column in column_names %}
+                                    <th>{{ column }}</th>
+                                {% endfor %}
+                            </tr>               
+                        </thead>
+                        <tbody>
+                             {% for row in filteredData %}
+                                 <tr>
+                                    {% for column in column_names %}
+                                        <td>{{ row|get_attr:column }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %} 
+                        </tbody>
+                    </table> 
+                     
+                    <div class="finalDataBox">
+                        <div class="empty">
+            
+                        </div>
+                        <div class="data">
+                            <div class="final-item">Sub Total Price</div>
+                            <div class="final-item-data">{{ totalUnitPriceValue }}</div>
+                            <div class="final-item">GST Extra {{ companyGSTApply }}%</div>
+                            <div class="final-item-data">{{ gstApply}}</div>
+                            <div class="final-item">Total Amount</div>
+                            <div class="final-item-data">{{ totalAmount }}</div>
+                    
+                        </div>               
+                    </div>
+                {% endif %}
+            {% else %}
+            <table>
+                <thead>
+                    <div class="quotationHeading">
+                        <h2>Quotation for {{ quotationFor }} with {{ quotationType }}</h2>
+                    </div>
+                    <tr>
+                        {% for column in column_names %}
+                            <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>               
+                </thead>
+                <tbody>
+                     {% for row in filteredData %}
+                         <tr>
+                            {% for column in column_names %}
+                                <td>{{ row|get_attr:column }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %} 
+                </tbody>
+            </table> 
+             
+            <div class="finalDataBox">
+                <div class="empty">
+    
+                </div>
+                <div class="data">
+                    <div class="final-item">Sub Total Price</div>
+                    <div class="final-item-data">{{ totalUnitPriceValue }}</div>
+                    <div class="final-item">GST Extra {{ companyGSTApply }}%</div>
+                    <div class="final-item-data">{{ gstApply}}</div>
+                    <div class="final-item">Total Amount</div>
+                    <div class="final-item-data">{{ totalAmount }}</div>
+            
+                </div>               
+            </div>
+            {% endif %}
+            
+
+            <div class="terms_condition">
+                <table>
+                    <thead>
+                        <h1>Terms of Business</h1>
+                        <tr>
+                            <th>INR Purchase</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Delivery Time: {{deliveryTime}}</td>
+                        </tr>
+                        <tr>
+                            <td>Taxes will be charged extra at actuals and as applicable at the time of billing.</td>
+                        </tr>
+                        <tr>
+                            <td>Validity: {{pricevalidtill}}</td>
+                        </tr>
+                        <tr>
+                            <td>The order released to be non-cancellable, non-refundable and non-conditional.</td>
+                        </tr>
+                        <tr>
+                            <td>Payment Term: {{companyPayment}}</td>
+                        </tr>
+                        <tr>
+                            <td>Time of Delivery will be confirmed from the date of purchase order.</td>
+                        </tr>
+                        <tr>
+                            <td>Order to be place on the name of Grand Ortus Solution Pvt Ltd.</td>
+                        </tr>
+                        <tr>
+                            <td>Registered office: D 14/30 SF, Ardee City, Sector-52, Gurugram-122003, Haryana (India)</td>
+                        </tr>
+                        {% if importantNote %}
+                        <tr>
+                            <td>Important Note: {{importantNote}}</td>
+                        </tr>
+                        {% endif %}
+                        
+                    </tbody>
+                </table>
+            </div>
+            <div class="bank_details">
+                <h1>Bank Details</h1>
+                <div class="details_section">
+                    <div class="grid-item">Name</div>
+                    <div class="grid-item-data">Grand Ortus Solutions Private Limited</div>
+                    <div class="grid-item">Bank Name</div>
+                    <div class="grid-item-data">Kotak Bank</div>
+                    <div class="grid-item">Account Number</div>
+                    <div class="grid-item-data">9958014222</div>  
+                    <div class="grid-item">IFSC Code</div>
+                    <div class="grid-item-data">KKBK0004256</div>           
+                </div>    
+            </div>
+            <div class="digitalSignature">
+                <div class="signatureCanvas">
+                    <canvas id="signature-pad" class="signature-pad"></canvas>
+                </div>
+                <br>
+                <br>
+                <div class="signatureButton">
+                    <button class="signButton" type="button" onclick="clearSignature()">Clear</button>
+                    <button class="signButton" type="button" onclick="saveSignature()">Save</button>
+                
+                </div>
+                <br>
+                <br>
+                <input type="hidden" name="signature_data" id="signature-data">
+                <div class="signature">
+                    <h2>Signature</h2>
+                    <img id="signature-image" class="signature-image" alt="Signature will appear here">
+                </div>
+
+            </div>
+            <div class="footer">
+                <button class="footer_style" onclick="window.print()">Print</button>
+                <a class="footer_style" href="/">Go Back</a>
+                <a class="footer_style" href="/logout">LogOut</a>
+            </div>   
+        </div>
+        
+    </div>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="static/css/quotation.css">
+    <script src="static/js/validation.js" defer></script>
+    <script src="static/js/quotation.js" defer></script>
+    <script src="static/js/addNewClient.js" defer></script>
+</head>
+<body class="container">
+    <div class="header">
+        <h1>
+            Welcome <strong>{{ username }}!!</strong>
+        </h1> 
+    </div>
+    <div class="company-details">
+        <div class="opt-for">
+            
+                {% comment %} <h1>Opt for Type of Quotation</h1> {% endcomment %}
+                <button type="button" class="opt-forButton" id="optForNewQuotation">New Quotation</button>
+                <button type="button" class="opt-forButton" id="optForReviseQuotation">Revise Quotation</button>
+                {% comment %} <h1>Add New User</h1> {% endcomment %}
+                <button type="button" class="opt-forButton" id="optForNewUser">Register New Client</button>
+                
+          
+
+        </div>
+        <form class="form-class" id="formClass" style="display: none;" method="post" action="/generate_quotation" autocomplete='off'> 
+            {% csrf_token %}
+            <div class="form-item">
+                <label for="userCompanyName">Company Name</label>
+                <div class="autocomplete-wrapper" id='autocomplete-wrapper'>
+                    <input type="text" id="userInputCompanyName" name="companyname" placeholder="enter company name" required> 
+                </div>    
+            </div>
+            <div class="form-item">
+                <label for="userCompanyAddress">Address</label>
+                <input type="text" id="userCompanyAddress" name="address" placeholder="company-address" required>
+            </div>
+            <div class="form-item">
+                <label for="userCompanyGST">Company GST No</label>
+                <input type="text" id="userCompanyGST" name="companygst" placeholder="enter company gst" required>    
+            </div>
+            <div class="form-item">
+                <label for="userCompanyGSTApply">Company GST Apply</label>
+                <input type="text" id="userCompanyGSTApply" name="companygstapply" placeholder="enter gst to apply" required>    
+            </div>
+            <div class="form-item">
+                <label for="userQuotationNo">Quotation No</label>
+                <input type="text" id="userQuotationNo" name="quotationNo" placeholder="enter quotation no" required>    
+            </div>
+            <div class="form-item">
+                <label for="userCompanyPayment">Payment Terms</label>
+                <input type="text" id="userCompanyPayment" name="paymentterms" placeholder="enter payment terms" required>    
+            </div>
+            <div class="form-item">
+                <label for="userCompanyDelivery">Delivery Time</label>
+                <input type="text" id="userCompanyDelivery" name="deliveryTime" placeholder="enter delivery time" required>    
+            </div>
+            <div class="form-item">
+                <label for="userCompanyQuotationFor">Quotation For</label>
+                <input type="text" id="userCompanyQuotationFor" name="quotationfor" placeholder="enter quotation for " required>    
+            </div>
+            <div class="form-item">
+                <label for="userPriceValidtill">Payment Valid Till</label>
+                <input type="text" id="userPriceValidtill" name="pricevalidtill" placeholder="enter validity terms" required>    
+            </div>
+            <div class="form-item">
+                <label for="userCompanyNote">Important Note</label>
+                <input type="text" id="userCompanyNote" name="importantNote" placeholder="enter other terms and condition">    
+            </div>
+            <div class="form-item">
+                <label for="userCompanyQuotation">Quotation Type</label>
+                <select name="quotationtype" id="userCompanyQuotation">
+                    <option value="default" disabled selected>Select an option</option>
+                    <option value="AMC Support">AMC Support</option>
+                    <option value="Warrenty/Supply" id="warrenty">Warrenty/Supply</option>
+                    <option value="Subscription/Licence">Subscription/Licence</option>
+                    <option value="BOQ">BOQ</option>
+                </select>
+            </div>
+            <div class="form-item" id="checkboxDisplay">
+                <h3>select columns to display</h3> 
+                <div class="checkbox-space">
+                    <div id="columnForm" >
+                        <label><input type="checkbox" name="columns" value="itemName"> Item Name</label><br>
+                        <label><input type="checkbox" name="columns" value="itemDescription"> Item Description</label><br>
+                        <label><input type="checkbox" name="columns" value="hsnsac"> HSN/SAC</label><br>
+                        <label><input type="checkbox" name="columns" value="productSlNo"> Product SLNo.</label><br>
+                        <label><input type="checkbox" name="columns" value="partNo"> Part No.</label><br>
+                        <label><input type="checkbox" name="columns" value="orderID"> Order ID</label><br>
+                        <label><input type="checkbox" name="columns" value="partID"> Part ID</label><br>
+                        {% comment %} <label><input type="checkbox" name="columns" value="amc">AMC Year</label><br> {% endcomment %}
+                        {% comment %} <label><input type="checkbox" name="columns" value="subscription"> Subscription Year</label><br> {% endcomment %}
+                        <label><input type="checkbox" name="columns" value="warrenty"> Warrenty Year</label><br>
+                        <label><input type="checkbox" name="columns" value="startDate"> Start Date</label><br>
+                        <label><input type="checkbox" name="columns" value="endDate"> End Date</label><br>
+                        <label><input type="checkbox" name="columns" value="instane"> Instane</label><br>
+                        <label><input type="checkbox" name="columns" value="contractID"> Contract Id</label><br>
+                        <label><input type="checkbox" name="columns" value="units"> Units</label><br>
+                        <label><input type="checkbox" name="columns" value="unitPrice"> UnitPrice</label><br>
+                        <label><input type="checkbox" name="columns" value="margin"> Margin</label><br>
+                        <label><input type="checkbox" name="columns" value="lot"> Lot</label><br>
+                    </div>
+                    <button type="button" id='clearCheckboxBox'>Clear all Checkbox</button>
+                </div>
+                
+            </div>
+        
+                
+
+            <div class="form-item quotationformat" id="boqForm">
+                    <h2>Add Quotation</h2>
+                    <table id="boqQuotationTable">
+                        <thead>
+                            <tr>
+                                <th class="itemName column" style="display:none;">Item Name</th>
+                                <th class="itemDescription column" style="display:none;">Item Description</th>
+                                <th class="hsnsac column" style="display:none;">HSN/SAC</th>
+                                <th class="productSlNo column" style="display:none;">Product SLNo</th>
+                                <th class="partNo column" style="display:none;">Part No.</th>
+                                <th class="orderID column" style="display:none;">Order ID</th>
+                                <th class="partID column" style="display:none;">Part ID</th>
+                                <th class="contractID column" style="display:none;">Contract Id</th>
+                                <th class="instane column" style="display:none;">Instane</th>
+                                {% comment %} <th class="amc column" style="display:none;">AMC Year</th> {% endcomment %}
+                                <th class="warrenty column" style="display:none;">Warrenty Year</th>
+                                {% comment %} <th class="subscription column" style="display:none;">Subscription Year</th> {% endcomment %}
+                                <th class="startDate column" style="display:none;">Start Date</th>
+                                <th class="endDate column" style="display:none;">End Date</th>
+                                <th class="units column" style="display:none;">Unit</th>
+                                <th class="lot column" style="display:none;">Lot</th>
+                                <th class="unitPrice column" style="display:none;">Price</th>
+                                <th class="margin column" style="display:none;">Margin</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody id="boqFormTableBody">
+                            <!-- Initial row -->
+                            <tr>
+                                
+                            </tr>
+                        </tbody>
+                    </table>     
+                
+            </div>
+            {% comment %} <div class="form-item quotationformat" id="amcForm" style="display: none;">
+                <h2>Add Quotation</h2>
+                    <table id="amcQuotationTable">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Item Description</th>
+                                <th>AMC Year</th>
+                                <th>HSN/SAC</th>
+                                <th>Star Date</th>
+                                <th>End Date</th>
+                                <th>Unit</th>
+                                <th>Price</th>
+                                <th>Margin</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Initial row -->
+                            <tr>
+                                <td><input type="text" name="item_name[]" placeholder="item name" required></td>
+                                <td><textarea name="item_description[]"  placeholder="item description"></textarea></td>
+                                <td><input type="number" name="amc_year[]" placeholder="amc-time"></td>
+                                <td><input type="number" name="hsn/sac[]" placeholder="hsn/sac"></td>
+                                <td><input type="date" name="start_date[]" placeholder="start-date"></td>
+                                <td><input type="date" name="end_date[]" placeholder="end-date"></td>
+                                <td><input type="number" name="units[]" placeholder="units"></td>  
+                                <td><input type="number" name="price[]" placeholder="price"></td> 
+                                <td><input type="number" name="margin[]" placeholder="margin"></td> 
+                                <td><button class="button-style" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                        </tbody>
+                    </table>     
+            </div>  
+            <div class="form-item quotationformat" id="warrentyForm" style="display: none;">
+                <h2>Add Quotation</h2>
+                    <table id="quotationTable">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Item Description</th>
+                                <th>Warrenty Year</th>
+                                <th>Unit</th>
+                                <th>Price</th>
+                                <th>Margin</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Initial row -->
+                            <tr>
+                                <td><input type="text" name="item_name[]" placeholder="item name" required></td>
+                                <td><textarea name="item_description[]"  placeholder="item description"></textarea></td>
+                                <td><input type="number" name="warrenty_year[]" placeholder="year of warrenty"></td>
+                                <td><input type="number" name="units[]" placeholder="units"></td>  
+                                <td><input type="number" name="price[]" placeholder="price"></td> 
+                                <td><input type="number" name="margin[]" placeholder="margin"></td> 
+                                <td><button class="button-style" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                        </tbody>
+                    </table>     
+            </div>
+            <div class="form-item quotationformat" id="subscriptionForm" style="display: none;">
+                <h2>Add Quotation</h2>
+                    <table id="subscriptionQuotationTable">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Item Description</th>
+                                <th>Subscription Year</th>
+                                <th>Star Date</th>
+                                <th>End Date</th>
+                                <th>Unit</th>
+                                <th>Price</th>
+                                <th>Margin</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Initial row -->
+                            <tr>
+                                <td><input type="text" name="item_name[]" placeholder="item name" required></td>
+                                <td><textarea name="item_description[]"  placeholder="item description"></textarea></td>
+                                <td><input type="number" name="subscription_year[]" placeholder="subscription-time"></td>
+                                <td><input type="date" name="start_date[]" placeholder="start-date"></td>
+                                <td><input type="date" name="end_date[]" placeholder="end-date"></td>
+                                <td><input type="number" name="units[]" placeholder="units"></td>  
+                                <td><input type="number" name="price[]" placeholder="price"></td> 
+                                <td><input type="number" name="margin[]" placeholder="margin"></td> 
+                                <td><button class="button-style" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                        </tbody>
+                    </table>     
+            </div> {% endcomment %}
+            <div class="footer" id="footerData">
+                {% comment %} <a class="button-style" href="/generate_quotation">Submit</a>  {% endcomment %}
+                <button class="button-style" id= "generateQuotation" type="submit">Generate Quotation</button> 
+                <button class="button-style" type="button" id="addRowBtn">Add Row</button>
+                <a class="button-style" href="/logout">LogOut</a>   
+            </div>
+        </form>
+        <form class="form2-class" id="form2Class" style="display: none;" method="POST" action="" autocomplete='off'>
+            {% csrf_token %}
+            <div class="form-item">
+                <label for="userCompanyName">Company Name</label>
+                <div class="autocomplete-wrapper" id='autocomplete-wrapper2'>
+                    <input type="text" id="user2InputCompanyName" name="companyname" placeholder="enter company name" required>   
+                </div> 
+            </div>
+            <div class="form-item">
+                <label for="userCompanyAddress">Address</label>
+                <input type="text" id="user2CompanyAddress" name="address" placeholder="company-address" required>
+            </div>
+            <div class="form-item">
+                <label for="userCompanyGST">Company GST No</label>
+                <input type="text" id="user2CompanyGST" name="companygst" placeholder="enter company gst">    
+            </div>
+            <div class="form-item">
+                <label for="userQuotationNo">Quotation No</label>
+                <input type="text" id="user2QuotationNo" name="quotationNo" placeholder="enter quotation no">    
+            </div>
+            <table id="revisedQuotationTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>SL No.</th>
+                        <th>Item Name</th>
+                        <th>Item Description</th>
+                        <th>Unit</th>
+                        <th>Cost Price</th>
+                        <th>Old Margin</th>
+                        <th>Updated Price</th>
+                        <th>New Margin</th>
+                        <th>New Price</th>
+                    </tr>
+                </thead>
+                <tbody id="revisedQuotationBody">
+
+                </tbody>
+                
+            </table>
+            <div class="footer" id="footerData" style="margin-top: 1.5rem;">
+                {% comment %} <a class="button-style" href="/generate_quotation">Submit</a>  {% endcomment %}
+                <button class="button-style" id="generateReviseQuotationButton" type"button" onclick='getTableData(event)'>Generate Quotation</button> 
+                <a class="button-style" href="/logout">LogOut</a>   
+            </div>
+        </form>
+        <form class="form3-class" id="form3Class" style="display: none;" action="/addNewClient" method="post" autocomplete='off'>
+            {% csrf_token %}
+            <div class="form-item">
+                <label for="userCompanyName">Company Name</label>
+                <div class="autocomplete-wrapper" id='autocomplete-wrapper'>
+                    <input type="text" name="companyname" placeholder="enter company name" required> 
+                </div>    
+            </div>
+            <div class="form-item">
+                <label for="userCompanyAddress">Address</label>
+                <input type="text" name="address" placeholder="company-address">
+            </div>
+            <div class="form-item">
+                <label for="userCompanyGST">Company GST No</label>
+                <input type="text" name="companygst" placeholder="enter company gst">    
+            </div>  
+            <div class="form-item">
+                <label for="userConcernPerson">Concern Person Name</label>
+                <input type="text" name="concernPerson" placeholder="enter concern person name">    
+            </div> 
+            <div class="form-item">
+                <label for="userPersonDesignation">Person Designation</label>
+                <input type="text" name="personDesignation" placeholder="enter person designation">    
+            </div> 
+            <div class="form-item">
+                <label for="userPersonPhoneNo">Person Contact No.</label>
+                <input type="text" name="personContactNo" placeholder="enter concerned person contact no">    
+            </div> 
+            <div class="form-item">
+                <label for="userPersonEmailID">Person EmailID</label>
+                <input type="text" name="personEmail" placeholder="enter concerned person email id">    
+            </div> 
+            <div class="footer" id="footerData" style="margin-top: 1.5rem;">
+                <button class="button-style" type"submit">Register</button> 
+                <a class="button-style" href="/logout">LogOut</a>   
+            </div>
+
+        </form>
+    </div> 
+    
+    
+    
+</body>
+</html>

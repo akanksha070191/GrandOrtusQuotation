@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/css/index.css">
+    <title>Document</title>
+</head>
+<body>
+   <div class="container">
+    {% if messages %}
+        {% for message in  messages%}
+            <li class="{{message.tags}}">
+                {{message}}
+            </li>
+        {% endfor %}
+    {% endif %}
+        <h1>SignIn</h1>
+        <form class="form-class" method="post" action="/login">
+            {% csrf_token %}
+            <div class="form-item">
+                <label for="userInputName">Name</label>
+                <input type="text" id="userInputName" name="username" placeholder="enter your name" required>    
+            </div>
+            <div class="form-item">
+                <label for="userInputPassword">Password</label>
+                <input type="password" id="userInputPassword" name="password" placeholder="password" required>    
+            </div>
+            <div class="form-item">
+                <button type="submit">Submit</button>    
+            </div>
+        </form>
+        <div class="form-item">
+            <li class="user-form"><a href="/create_user">Create User</a></li>
+        </div>
+
+
+   </div>
+</body>
+</html>

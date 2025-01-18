@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/css/create_user.css">
+    <script src="static/js/validation.js" defer></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        {% if messages %}
+            {% for message in  messages %}
+                <li class= "{{message.tags}}">
+                    
+                    {{message}}
+                </li>
+            {% endfor %}
+        {% endif %}
+        <form action="/create_user" method='post' class="form-class" onsubmit="return valid()">
+            {% csrf_token %}
+            <h2>Fill Information</h2>
+            <div class="form-item">
+                <label for="userInputName">Name</label>
+                <input type="text" id="userInputName" name="username" placeholder="enter your name" required>    
+            </div>
+            <div class="form-item">
+                <label for="userInputLastName">Last Name</label>
+                <input type="text" id="userInputLastName" name="last_name" placeholder="enter your last name">    
+            </div>
+            <div class="form-item">
+                <label for="userInputEmail">Email</label>
+                <input type="email" id="userInputEmail" name="email" placeholder="email" required>    
+            </div>
+            <div class="form-item">
+                <label for="userInputPhone">Contact No</label>
+                <input type="number" id="userInputPhone" name="phone" placeholder="contact number" required>    
+            </div>
+            <div class="form-item">
+                <label for="userInputPassword">Password</label>
+                <input type="password" id="userInputPassword" name="password" placeholder="password" required>    
+            </div>
+            <div class="form-item">
+                <div class="form-login-area">
+                    <button class="form-style" type="submit">Create</button>
+                    <li class="form-style"><a href="/login">LogIn</a></li>
+                </div>
+                    
+            </div>
+        </form>
+    </div>
+</body>
+</html>
