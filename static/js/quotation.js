@@ -355,22 +355,26 @@ function disableAutocomplete(field){
 
 const newQuotation = document.getElementById('optForNewQuotation');
 const form = document.getElementById('form3Class');
+const form4 = document.getElementById('form4Class');
 console.log(newQuotation)
 const formData = document.getElementById('formClass');
 console.log(formData)
 formData.style.display = 'none';
+
 // form2Data.style.display = 'none';
 newQuotation.addEventListener('click', ()=>{
     clearFormData(formData);
     formData.style.display = 'block';
     form2Data.style.display = 'none';
     form.style.display = 'none';
+    form4.style.display = 'none';
     disableAutocomplete(document.getElementById('user2InputCompanyName')); 
     enableAutocomplete(document.getElementById('userInputCompanyName')); 
 })
 
 const reviseQuotation = document.getElementById('optForReviseQuotation');
 const form2Data = document.getElementById('form2Class');
+
 // formData.style.display = 'none';
 form2Data.style.display = 'none';
 reviseQuotation.addEventListener('click', ()=>{
@@ -378,6 +382,7 @@ reviseQuotation.addEventListener('click', ()=>{
     form2Data.style.display = 'block';
     formData.style.display = 'none';
     form.style.display = 'none';
+    form4.style.display = 'none';
     disableAutocomplete(document.getElementById('userInputCompanyName')); 
     enableAutocomplete(document.getElementById('user2InputCompanyName')); 
 })

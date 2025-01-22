@@ -1004,3 +1004,20 @@ def addNewClient(request):
 
         
         return redirect('/')
+    
+def deleteQuotation(request):
+    if request.method=='POST':
+        quotationNo = request.POST.get('quotationNo')
+
+        quotations = BOQQuotationTable.objects.filter(quotationNo=quotationNo)
+        if quotations.exists():
+            # Handle the returned queryset (multiple records)
+            for quotation in quotations:
+                # Process each quotation
+                print(quotation.itemName)
+                quotation.delete()
+            
+            return render(request, 'error.html', {'error_message':'Quotation Deleted'})
+        else:
+            return render(request, 'error.html', {'error_message':'No such Quotation exist'})
+

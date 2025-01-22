@@ -8,6 +8,7 @@
     <script src="static/js/validation.js" defer></script>
     <script src="static/js/quotation.js" defer></script>
     <script src="static/js/addNewClient.js" defer></script>
+    <script src="static/js/deleteQuotation.js" defer></script>
 </head>
 <body class="container">
     <div class="header">
@@ -23,6 +24,7 @@
                 <button type="button" class="opt-forButton" id="optForReviseQuotation">Revise Quotation</button>
                 {% comment %} <h1>Add New User</h1> {% endcomment %}
                 <button type="button" class="opt-forButton" id="optForNewUser">Register New Client</button>
+                <button type="button" class="opt-forButton" id="deleteQuotation">Delete Quotation</button>
                 
           
 
@@ -326,6 +328,19 @@
             </div> 
             <div class="footer" id="footerData" style="margin-top: 1.5rem;">
                 <button class="button-style" type"submit">Register</button> 
+                <a class="button-style" href="/logout">LogOut</a>   
+            </div>
+
+        </form>
+        <form class="form4-class" id="form4Class" style="display: none;" action="/deleteQuotation" method="post" autocomplete='off'>
+            {% csrf_token %}
+            <div class="form-item">
+                <label for="userQuotationNo">Quotation No</label>
+                <input type="text" id="deleteQuotationNo" name="quotationNo" placeholder="enter quotation no">    
+            </div>
+
+            <div class="footer" id="footerData" style="margin-top: 1.5rem;">
+                <button class="button-style" type"submit">Delete Quotation</button> 
                 <a class="button-style" href="/logout">LogOut</a>   
             </div>
 
