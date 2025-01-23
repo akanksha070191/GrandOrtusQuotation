@@ -152,14 +152,6 @@ function validateDateFormat(dateString) {
 }
 
 
-
-function deleteRow(button) {
-    // Get the row that contains the button and remove it
-    var row = button.parentNode.parentNode;
-    row.parentNode.removeChild(row);
-};
-
-
 // const quotationtype = document.getElementById('userCompanyQuotation');
 // const warrentyForm = document.getElementById('warrentyForm');
 // const amcForm = document.getElementById('amcForm');
@@ -428,95 +420,140 @@ function newUpdatedTable(quotationDataNew){
                 const tableRow = document.createElement("tr");
                 console.log('item is:', item)
 
-                const cell0 = document.createElement("td");
-                cell0.textContent = item['SL No.'] || 'N/A';
-                tableRow.appendChild(cell0);
+                tableRow.innerHTML = `
+                <td>${item['ID'] || 'N/A'}</td>
+                <td>${item['SL No.'] || 'N/A'}</td>
+                <td>${item['Item Name'] || 'N/A'}</td>
+                <td>${item['Item Description'] || 'N/A'}</td>
+                <td>${item['Units'] || 'N/A'}</td>
+                <td>${item['Cost Price'] || 'N/A'}</td>
+                <td>${item['Old Margin'] || 'N/A'}</td>
+                <td>${item['Price'] || 'N/A'}</td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td>
+                    <button class="delete-row-btn" onclick="deleteRow(this)">Delete</button>
+                </td>
+            `;
+            quotationTableData.appendChild(tableRow);
 
-                const cell1 = document.createElement("td");
-                cell1.textContent = item['Item Name'] || 'N/A';
-                tableRow.appendChild(cell1);
+                // const cell0 = document.createElement("td");
+                // cell0.textContent = item['SL No.'] || 'N/A';
+                // tableRow.appendChild(cell0);
 
-                const cell2 = document.createElement("td");
-                cell2.textContent = item['Item Description'] || 'N/A';
-                tableRow.appendChild(cell2);
+                // const cell1 = document.createElement("td");
+                // cell1.textContent = item['Item Name'] || 'N/A';
+                // tableRow.appendChild(cell1);
 
-                const cell3 = document.createElement("td");
-                cell3.textContent = item['Units'] || 'N/A';
-                tableRow.appendChild(cell3);
+                // const cell2 = document.createElement("td");
+                // cell2.textContent = item['Item Description'] || 'N/A';
+                // tableRow.appendChild(cell2);
 
-                const cell4 = document.createElement("td");
-                cell4.textContent = item['Cost Price'] || 'N/A';
-                tableRow.appendChild(cell4);
+                // const cell3 = document.createElement("td");
+                // cell3.textContent = item['Units'] || 'N/A';
+                // tableRow.appendChild(cell3);
 
-                const cell5 = document.createElement("td");
-                cell5.textContent = item['Old Margin'] || 'N/A';
-                tableRow.appendChild(cell5);
+                // const cell4 = document.createElement("td");
+                // cell4.textContent = item['Cost Price'] || 'N/A';
+                // tableRow.appendChild(cell4);
+
+                // const cell5 = document.createElement("td");
+                // cell5.textContent = item['Old Margin'] || 'N/A';
+                // tableRow.appendChild(cell5);
                 
-                const cell6 = document.createElement("td");
-                cell6.textContent = item['Price'] || 'N/A';
-                tableRow.appendChild(cell6);
+                // const cell6 = document.createElement("td");
+                // cell6.textContent = item['Price'] || 'N/A';
+                // tableRow.appendChild(cell6);
 
-                const cell7 = document.createElement("td");
-                cell7.contentEditable = "true";
-                cell7.textContent = '';
-                tableRow.appendChild(cell7);
+                // const cell7 = document.createElement("td");
+                // cell7.contentEditable = "true";
+                // cell7.textContent = '';
+                // tableRow.appendChild(cell7);
 
-                const cell8 = document.createElement("td");
-                cell8.contentEditable = "true";
-                cell8.textContent = '';
-                tableRow.appendChild(cell8);
+                // const cell8 = document.createElement("td");
+                // cell8.contentEditable = "true";
+                // cell8.textContent = '';
+                // tableRow.appendChild(cell8);
 
-                quotationTableData.appendChild(tableRow);
+                // quotationTableData.appendChild(tableRow);
 
             });
         } else {
                 const tableRow = document.createElement("tr");
 
-                const cell0 = document.createElement("td");
-                cell0.textContent = item['SL No.'] || 'N/A';
-                tableRow.appendChild(cell0);
+                tableRow.innerHTML = `
+                <td>${item['ID'] || 'N/A'}</td>
+                <td>${item['SL No.'] || 'N/A'}</td>
+                <td>${item['Item Name'] || 'N/A'}</td>
+                <td>${item['Item Description'] || 'N/A'}</td>
+                <td>${item['Units'] || 'N/A'}</td>
+                <td>${item['Cost Price'] || 'N/A'}</td>
+                <td>${item['Old Margin'] || 'N/A'}</td>
+                <td>${item['Price'] || 'N/A'}</td>
+                <td contenteditable="true"></td>
+                <td contenteditable="true"></td>
+                <td>
+                    <button class="delete-row-btn" onclick="deleteRow(this)">Delete</button>
+                </td>
+            `;
+            quotationTableData.appendChild(tableRow);
 
-                const cell1 = document.createElement("td");
-                cell1.textContent = item['Item Name'] || 'N/A';
-                tableRow.appendChild(cell1);
+                // const cell0 = document.createElement("td");
+                // cell0.textContent = item['SL No.'] || 'N/A';
+                // tableRow.appendChild(cell0);
 
-                const cell2 = document.createElement("td");
-                cell2.textContent = item['Item Description'] || 'N/A';
-                tableRow.appendChild(cell2);
+                // const cell1 = document.createElement("td");
+                // cell1.textContent = item['Item Name'] || 'N/A';
+                // tableRow.appendChild(cell1);
 
-                const cell3 = document.createElement("td");
-                cell3.textContent = item['Units'] || 'N/A';
-                tableRow.appendChild(cell3);
+                // const cell2 = document.createElement("td");
+                // cell2.textContent = item['Item Description'] || 'N/A';
+                // tableRow.appendChild(cell2);
 
-                const cell4 = document.createElement("td");
-                cell4.textContent = item['Cost Price'] || 'N/A';
-                tableRow.appendChild(cell4);
+                // const cell3 = document.createElement("td");
+                // cell3.textContent = item['Units'] || 'N/A';
+                // tableRow.appendChild(cell3);
 
-                const cell5 = document.createElement("td");
-                cell5.textContent = item['Old Margin'] || 'N/A';
-                tableRow.appendChild(cell5);
+                // const cell4 = document.createElement("td");
+                // cell4.textContent = item['Cost Price'] || 'N/A';
+                // tableRow.appendChild(cell4);
+
+                // const cell5 = document.createElement("td");
+                // cell5.textContent = item['Old Margin'] || 'N/A';
+                // tableRow.appendChild(cell5);
                 
-                const cell6 = document.createElement("td");
-                cell6.textContent = item['Price'] || 'N/A';
-                tableRow.appendChild(cell6);
+                // const cell6 = document.createElement("td");
+                // cell6.textContent = item['Price'] || 'N/A';
+                // tableRow.appendChild(cell6);
 
-                const cell7 = document.createElement("td");
-                cell7.contentEditable = "true";
-                cell7.textContent = '';
-                tableRow.appendChild(cell7);
+                // const cell7 = document.createElement("td");
+                // cell7.contentEditable = "true";
+                // cell7.textContent = '';
+                // tableRow.appendChild(cell7);
 
-                const cell8 = document.createElement("td");
-                cell8.contentEditable = "true";
-                cell8.textContent = '';
-                tableRow.appendChild(cell8);
+                // const cell8 = document.createElement("td");
+                // cell8.contentEditable = "true";
+                // cell8.textContent = '';
+                // tableRow.appendChild(cell8);
 
-                quotationTableData.appendChild(tableRow);
+                // quotationTableData.appendChild(tableRow);
 
         }
 
         
     });
 }
+
+let deletedRows = []; // Array to store IDs of deleted rows
+
+function deleteRow(button) {
+    const row = button.closest('tr'); // Get the row
+    const id = row.querySelector('td').textContent; // Get the unique SL No.
+    deletedRows.push(id); // Add SL No. to deletedRows array
+    row.remove(); // Remove the row from the table
+}
+
+
 document.getElementById('user2QuotationNo').addEventListener("input", fetchQuotationDetails);
 
 function getTableData(event){
@@ -527,19 +564,22 @@ function getTableData(event){
     const quotationNo = document.getElementById('user2QuotationNo').value;
     tableRows.forEach(row =>{
         const cells = row.querySelectorAll('td');
-        const newMargin = cells[7].textContent;
-        const newPrice = cells[8].textContent;
+        const newMargin = cells[8].textContent;
+        const newPrice = cells[9].textContent;
          tabledata.push({
-            SLNo: cells[0].textContent,
-            itemName: cells[1].textContent,
-            itemDescription: cells[2].textContent,
-            units: cells[3].textContent,
-            costPrice: cells[4].textContent,
-            oldMargin: cells[5].textContent,
-            price: cells[6].textContent,
+            ID: cells[0].textContent,
+            SLNo: cells[1].textContent,
+            itemName: cells[2].textContent,
+            itemDescription: cells[3].textContent,
+            units: cells[4].textContent,
+            costPrice: cells[5].textContent,
+            oldMargin: cells[6].textContent,
+            price: cells[7].textContent,
+
             newMargin: newMargin, 
             newPrice: newPrice,  
          });
+         console.log('Table Data:', tabledata);
          console.log('New Margin:', newMargin);
          console.log('New Price:', newPrice);
     });
@@ -553,7 +593,7 @@ function sendTableDataToServer(tabledata, quotationNo){
             'Content-Type': 'application/json',
             'X-CSRFToken': getCSRFToken()
         },
-        body: JSON.stringify({ tabledata: tabledata, quotationNo:quotationNo})
+        body: JSON.stringify({ tabledata: tabledata, quotationNo:quotationNo, deletedRows: deletedRows})
     })
 
     .then(response => {

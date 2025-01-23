@@ -634,6 +634,8 @@ def reviseQuotationData(request):
             rowData = {}
             rowData['SL No.']=index
 
+            if row.id:
+                rowData['ID'] = row.id
             if row.itemName:
                 rowData['Item Name'] = row.itemName
             if row.itemDescription:
@@ -686,16 +688,29 @@ def generateReviseQuotation(request):
             data = json.loads(request.body)
             table_data = data.get('tabledata', [])
             quotationNo = data.get('quotationNo')
+            deleted_rows = data.get('deletedRows', [])
             print('Quotation No.:', quotationNo)
             totalUnitPriceList=[]
             marginList=[]
             newPriceList=[]
+            print('deleted_rows', deleted_rows)
+
+            if deleted_rows:
+                BOQQuotationTable.objects.filter(quotationNo=quotationNo, id__in=deleted_rows).delete()
+                print(f"Deleted rows with IDs: {deleted_rows}")
+
             quotationDataNew=BOQQuotationTable.objects.filter(quotationNo=quotationNo)
             print(quotationDataNew)
 
             def extractDigit(price):
-                    digit = ''.join(filter(str.isdigit, price))
+                if not price or not isinstance(price, str):
+                    return None
+                digit = ''.join(filter(str.isdigit, price))
+                try:
                     return int(digit) if digit else None
+                except ValueError:
+                    print(f"Invalid price format: {price}")
+                    return None
             
             for index, (row, data) in enumerate(zip(table_data, quotationDataNew)):
                 units = row.get('units')
@@ -703,6 +718,8 @@ def generateReviseQuotation(request):
                 newMargin = row.get('newMargin')
                 newPrice = row.get('newPrice')
 
+                print('units:', units)
+                print('cost price', costPrice)
                 print('NewMargin:', newMargin)
                 print('NewPrice:', newPrice)
                 print(type(newMargin))
@@ -743,7 +760,7 @@ def generateReviseQuotation(request):
 
                     margin = round(float(newMargin))/ 100
                     marginApply = (margin * extractDigit(costPrice)) + extractDigit(costPrice)
-                    totalUnitPrice = int(units) * marginApply
+                    totalUnitPrice = int(units) * int(marginApply)
 
                     data.newMargin = newMargin
                     data.newMarginAppliedPrice = marginApply
