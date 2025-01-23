@@ -11,6 +11,7 @@ from collections import defaultdict
 import re
 from decimal import Decimal
 from django.core.cache import cache
+from django.views.decorators.cache import cache_control
 
 
 # Create your views here.
@@ -682,6 +683,8 @@ def reviseQuotationData(request):
     else:
         return JsonResponse({'error': 'Enter Valid Quotation ID'}, status=400)
         
+
+@cache_control(no_cache=True, must_revalidate=True)
 def generateReviseQuotation(request):
     if request.method == 'POST':
         print('inside generateReviseQuotation')
@@ -1023,7 +1026,8 @@ def addNewClient(request):
 
         
         return redirect('/')
-    
+
+@cache_control(no_cache=True, must_revalidate=True)    
 def deleteQuotation(request):
     if request.method=='POST':
         quotationNo = request.POST.get('quotationNo')

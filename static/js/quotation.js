@@ -307,7 +307,7 @@ async function onUserInputClickButton(e){
 
     if (clientName){
         try{
-            const response = await fetch(`/api/getClientData/?companyname=${encodeURIComponent(clientName)}`);
+            const response = await fetch(`/api/getClientData/?companyname=${encodeURIComponent(clientName)}`, {cache:'no-store'});
             if (!response.ok){
                 throw new Error('Company not Found')
             }
