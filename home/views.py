@@ -10,6 +10,7 @@ from django.db import connection
 from collections import defaultdict
 import re
 from decimal import Decimal
+from django.core.cache import cache
 
 
 # Create your views here.
@@ -697,6 +698,7 @@ def generateReviseQuotation(request):
 
             if deleted_rows:
                 BOQQuotationTable.objects.filter(quotationNo=quotationNo, id__in=deleted_rows).delete()
+                cache.clear()
                 print(f"Deleted rows with IDs: {deleted_rows}")
 
             quotationDataNew=BOQQuotationTable.objects.filter(quotationNo=quotationNo)
@@ -1033,6 +1035,7 @@ def deleteQuotation(request):
                 # Process each quotation
                 print(quotation.itemName)
                 quotation.delete()
+                cache.clear()
             
             return render(request, 'error.html', {'error_message':'Quotation Deleted'})
         else:
