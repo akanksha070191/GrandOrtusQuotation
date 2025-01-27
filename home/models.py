@@ -59,7 +59,7 @@ class BOQQuotationTable(models.Model):
     itemName = models.TextField()
     itemDescription = models.CharField(max_length=500)
     hsn_sac = models.CharField(max_length=50, null=True)
-    productSlNo = models.CharField(max_length=20, null=True)
+    productSlNo = models.CharField(max_length=100, null=True)
     quotationType = models.CharField(max_length=20, null=True)
     quotationNo = models.CharField(max_length=50, null=True)
     partNo = models.CharField(max_length=100, null=True)

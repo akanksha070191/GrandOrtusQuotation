@@ -133,9 +133,6 @@ def generate_quotation(request):
 
         if quotationType == 'Subscription/Lisence':
             tableData = zip(itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, lots, units, price, margin)
-            for row in tableData:
-                    if not any(row):  # Skip entirely empty rows
-                        continue
             for itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, lots, units, price, margin in tableData:
                 if not any([itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, lots, units, price, margin]):
                     continue
