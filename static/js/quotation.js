@@ -204,6 +204,15 @@ document.getElementById('clearCheckboxBox').addEventListener('click', function()
     });
 });
 
+document.getElementById('userCompanyQuotation').addEventListener('change', function(){
+    const lotDisplayCheckbox = document.getElementById('lotDisplay');
+    if (this.value === 'BOQ') {
+        lotDisplayCheckbox.style.display = 'block'; // Show the checkbox
+    } else {
+        lotDisplayCheckbox.style.display = 'none'; // Hide the checkbox
+    }
+});
+
 
 let clientNames = [];
 fetchData();
@@ -348,6 +357,7 @@ function disableAutocomplete(field){
 const newQuotation = document.getElementById('optForNewQuotation');
 const form = document.getElementById('form3Class');
 const form4 = document.getElementById('form4Class');
+const from5 = document.getElementById('form5Class');
 console.log(newQuotation)
 const formData = document.getElementById('formClass');
 console.log(formData)
@@ -360,6 +370,7 @@ newQuotation.addEventListener('click', ()=>{
     form2Data.style.display = 'none';
     form.style.display = 'none';
     form4.style.display = 'none';
+    from5.style.display = 'none';
     disableAutocomplete(document.getElementById('user2InputCompanyName')); 
     enableAutocomplete(document.getElementById('userInputCompanyName')); 
 })
@@ -375,6 +386,7 @@ reviseQuotation.addEventListener('click', ()=>{
     formData.style.display = 'none';
     form.style.display = 'none';
     form4.style.display = 'none';
+    from5.style.display = 'none';
     disableAutocomplete(document.getElementById('userInputCompanyName')); 
     enableAutocomplete(document.getElementById('user2InputCompanyName')); 
 })

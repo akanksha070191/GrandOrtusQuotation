@@ -127,10 +127,18 @@ def generate_quotation(request):
 
         totalAmountValue = []
         unitPriceValueList = []
-        if quotationType == 'Subscription/Licence':
-            tableData = zip(itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, lots, units, price, margin)
 
+        print('lots', lots)
+        print('quotationtype: ', quotationType)
+
+        if quotationType == 'Subscription/Lisence':
+            tableData = zip(itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, lots, units, price, margin)
+            for row in tableData:
+                    if not any(row):  # Skip entirely empty rows
+                        continue
             for itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, lots, units, price, margin in tableData:
+                if not any([itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, lots, units, price, margin]):
+                    continue
                 if startDate:
                     possible_dateFormat = ['%d-%m-%Y', '%Y-%m-%d']
                     for date in possible_dateFormat:
@@ -257,44 +265,79 @@ def generate_quotation(request):
                         except ValueError as e:
                             print(e)
                 else:
-                    print('error')
+                    pass
 
             for year_diff, data in data_by_year_difference.items():
                 gst_rate = int(companyGSTApply) / 100
                 data['gst'] = "{:.2f}".format(Decimal(data['subtotal']) * Decimal(gst_rate))
                 data['total_with_gst'] = "{:.2f}".format(Decimal(data['subtotal']) + Decimal(data['gst']))
-                
-            context = {
-                        'companyName':companyName,
-                        'companyAddress':companyAddress,
-                        'companyGST':companyGST,
-                        'companyGSTApply':companyGSTApply,
-                        'companyQuotationNo':companyQuotationNoFinal,
-                        'quotationType':quotationType,
-                        'pricevalidtill':pricevalidtill,
-                        'importantNote':importantNote,
-                        'deliveryTime':deliveryTime,
-                        'companyPayment':companyPayment,
-                        'date':formatted_datetime,
-                        'price': price,
-                        'quotationFor':quotationFor,
-                        # 'totalUnitPriceValue':totalUnitPriceValue,
-                        'gstApply':gstApply,
-                        # 'totalAmount':totalAmount,
-                        
-                        'data_by_year':dict(data_by_year),
-                        'data_by_year_difference': dict(data_by_year_difference),
-                        'unique_year_diffs': sorted(data_by_year_difference.keys()),
-                        'column_names':column_names,
-                        
 
-            }
-            return render(request, 'generateQuotation.html', context)
+            if data_by_year and data_by_year_difference:
+                
+                context = {
+                            'companyName':companyName,
+                            'companyAddress':companyAddress,
+                            'companyGST':companyGST,
+                            'companyGSTApply':companyGSTApply,
+                            'companyQuotationNo':companyQuotationNoFinal,
+                            'quotationType':quotationType,
+                            'pricevalidtill':pricevalidtill,
+                            'importantNote':importantNote,
+                            'deliveryTime':deliveryTime,
+                            'companyPayment':companyPayment,
+                            'date':formatted_datetime,
+                            'price': price,
+                            'quotationFor':quotationFor,
+                            # 'totalUnitPriceValue':totalUnitPriceValue,
+                            'gstApply':gstApply,
+                            # 'totalAmount':totalAmount,
+                            
+                            'data_by_year':dict(data_by_year),
+                            'data_by_year_difference': dict(data_by_year_difference),
+                            'unique_year_diffs': sorted(data_by_year_difference.keys()),
+                            'column_names':column_names,
+                            
+
+                }
+
+                print('context', context)
+
+                return render(request, 'generateQuotation.html', context)
+            else:
+                context = {
+                            'companyName':companyName,
+                            'companyAddress':companyAddress,
+                            'companyGST':companyGST,
+                            'companyGSTApply':companyGSTApply,
+                            'companyQuotationNo':companyQuotationNoFinal,
+                            'quotationType':quotationType,
+                            'pricevalidtill':pricevalidtill,
+                            'importantNote':importantNote,
+                            'deliveryTime':deliveryTime,
+                            'companyPayment':companyPayment,
+                            'date':formatted_datetime,
+                            'price': price,
+                            'quotationFor':quotationFor,
+                            'totalUnitPriceValue':totalUnitPriceValue,
+                            'gstApply':gstApply,
+                            'totalAmount':totalAmount,
+                            
+                            'filteredData':filteredData,
+                            'column_names':column_names,
+                            
+
+                }
+
+                print('context', context)
+
+                return render(request, 'generateQuotation.html', context)
+
 
         elif quotationType == 'BOQ':
             tableData = zip(itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, lots, units, price, margin)
-
             for itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, lots, units, price, margin in tableData:
+                if not any([itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, lots, units, price, margin]):
+                    continue
                 if startDate:
                     possible_dateFormat = ['%d-%m-%Y', '%Y-%m-%d']
                     for date in possible_dateFormat:
@@ -322,20 +365,28 @@ def generate_quotation(request):
                     digit = ''.join(filter(str.isdigit, price))
                     return int(digit) if digit else None
 
+                print('margin', margin)
                 newMargin = int(margin)/100
+                print(newMargin)
                 newMarginPrice = newMargin*extractDigit(price)
                 newUpdatedMarginPrice = newMarginPrice+extractDigit(price)
                 totalAmount = int(units)*newUpdatedMarginPrice
                 unitPriceValueList.append(totalAmount)
                 totalUnitPriceValue = sum(unitPriceValueList)
+                
                 gstApply = int(companyGSTApply)/100 * totalUnitPriceValue
                 subTotal = gstApply + totalUnitPriceValue
+
+
+                print('total price', totalUnitPriceValue)
+                print('sub total', subTotal)
                 
                 if lots: 
-                
+                    print('inside lots')
                     quotationDetails = BOQQuotationTable(itemName=itemName, itemDescription=itemDescription, hsn_sac=hsn_sac, productSlNo=productSlNo, quotationType=quotationType, quotationNo=companyQuotationNoFinal, partNo=partNo, orderId=orderId, partId=partId, startDate=startDate_formatted, endDate=endDate_formatted, instane=instane, contractId=contractId, warrentyYear=warrentyYear, lots=lots, units=units, price=price, margin=margin, totalUnitPrice= newUpdatedMarginPrice, totalAmount= totalAmount, currentDate= datetime.now().date(), companyGST=companyGSTRetrieve)
                     quotationDetails.save()
                 else:
+                    print('no lot present')
                     lots = None
                     quotationDetails = BOQQuotationTable(itemName=itemName, itemDescription=itemDescription, hsn_sac=hsn_sac, productSlNo=productSlNo, quotationType=quotationType, quotationNo=companyQuotationNoFinal, partNo=partNo, orderId=orderId, partId=partId, startDate=startDate_formatted, endDate=endDate_formatted, instane=instane, contractId=contractId, warrentyYear=warrentyYear, lots=lots, units=units, price=price, margin=margin, totalUnitPrice= newUpdatedMarginPrice, totalAmount= totalAmount, currentDate= datetime.now().date(), companyGST=companyGSTRetrieve)
                     quotationDetails.save()
@@ -397,23 +448,31 @@ def generate_quotation(request):
             print('Column Name', column_names)
 
             if 'Lot' in column_names:
-                groupData = defaultdict(lambda:{'rows': [], 'totalPrice': 0, 'rowCount': 0})
+                groupData = defaultdict(lambda: {'rows': [], 'totalPrice': 0, 'rowCount': 0})
 
                 for row in filteredData:
                     lot = row['Lot']
+                    print(f"Processing Lot: {lot}, Total Amount (Row): {row['Total Amount']}")
+
                     groupData[lot]['rows'].append(row)
-                    groupData[lot]['totalPrice'] += row['Total Amount']
+                    groupData[lot]['totalPrice'] += row['Total Amount']  
                     groupData[lot]['rowCount'] += 1
 
+                # Calculate totals and GST for each lot
                 for lot, lotData in groupData.items():
-                    totalAmount = lotData['totalPrice'] * lot
-                    print('totalAmount', type(totalAmount), totalAmount)
-                    gst = "{:.2f}".format(Decimal(int(companyGSTApply)/100) * Decimal(totalAmount))
-                    total_with_gst = Decimal(totalAmount) + Decimal(gst)
-                     
+                    totalAmount = lotData['totalPrice']
+                    print('totalAmount:', type(totalAmount), totalAmount)
+
+                    print('Total Amount for Lot:', lot, totalAmount)
+
+                    # Calculate GST and total amount including GST
+                    gst = Decimal(int(companyGSTApply) / 100) * Decimal(totalAmount)
+                    total_with_gst = Decimal(totalAmount) + gst
+
+                    # Update the lot data
                     lotData['totalAmount'] = "{:.2f}".format(Decimal(totalAmount))
-                    lotData['gst'] = gst
-                    lotData['total_with_gst'] = total_with_gst
+                    lotData['gst'] = "{:.2f}".format(gst)
+                    lotData['total_with_gst'] = "{:.2f}".format(total_with_gst)
             else:
                 groupData = None
                
@@ -471,8 +530,15 @@ def generate_quotation(request):
             finalTotalPrice_list = []
 
             tableData = zip(itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, units, price, margin)
-
+            for row in tableData:
+                    if not any(row):  # Skip entirely empty rows
+                        continue
             for itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, units, price, margin in tableData:
+                
+                if not any([itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, lots, units, price, margin]):
+                    continue
+
+                
                 if startDate:
                     possible_dateFormat = ['%d-%m-%Y', '%Y-%m-%d']
                     for date in possible_dateFormat:
@@ -495,6 +561,21 @@ def generate_quotation(request):
                 else:
                     startDate_formatted=None
                     endDate_formatted=None
+
+                try:
+                    margin = int(margin) if margin.isdigit() else 0
+                except (ValueError, TypeError):
+                    margin = 0
+
+                try:
+                    units = int(units) if units.isdigit() else 0
+                except (ValueError, TypeError):
+                    units = 0
+
+                try:
+                    price = float(price) if price else 0.0
+                except (ValueError, TypeError):
+                    price = 0.0
 
 
                 newMargin = int(margin)/100
@@ -590,6 +671,7 @@ def generate_quotation(request):
                 'column_names':column_names,
 
             }
+            
             return render(request, 'generateQuotation.html', context)
         
     return render(request, 'login.html')
@@ -745,6 +827,7 @@ def generateReviseQuotation(request):
 
                     totalUnitPriceList.append(totalUnitPrice)
                     data.save()
+                    print('Data when both margin and price is 0', data.newMarginPrice)
 
                 elif newMargin == '0':
                     newPriceList.append(newPrice)
@@ -756,6 +839,7 @@ def generateReviseQuotation(request):
                     print('New Margin price', data.newMarginPrice)
                     totalUnitPriceList.append(totalUnitPrice)
                     data.save()
+                    print('Data when both margin is 0', data.newMarginPrice)
 
 
                 elif newPrice == '0':
@@ -774,6 +858,7 @@ def generateReviseQuotation(request):
                     totalUnitPriceList.append(totalUnitPrice)
 
                     data.save()
+                    print('Data when both price is 0', data.newMarginPrice)
             
             companyGSTFetch = BOQQuotationTable.objects.filter(quotationNo=quotationNo).values('companyGST').first().get('companyGST')
             print('company GST:', companyGSTFetch)
@@ -842,8 +927,12 @@ def generateReviseQuotation(request):
                     rowData['Price'] = row.newMarginAppliedPrice
                 if row.newMarginPrice:
                     rowData['Total Amount'] = row.newMarginPrice
+
+
                 if rowData:
                     filteredData.append(rowData)
+            
+            print(rowData['Total Amount'])
             print('filtered data:', filteredData)   
             if filteredData:
                 column_names = filteredData[0].keys()
@@ -869,6 +958,7 @@ def generateReviseQuotation(request):
                         else:        
                             try:
                                 year_diff = end_date_str.year-start_date_str.year
+                                print('Year Diff', year_diff)
                                 total = row['Total Amount']
                                 data_by_year_difference[year_diff]['rows'].append(row)
                                 data_by_year_difference[year_diff]['subtotal'] += total
@@ -884,34 +974,61 @@ def generateReviseQuotation(request):
                     gst_rate = int(gstApply) / 100
                     data['gst'] = float(data['subtotal']) * float(gst_rate)
                     data['total_with_gst'] = float(data['subtotal']) + data['gst']
-                context = {
-                                'companyName':companyName,
-                                'companyAddress':companyAddress,
-                                'companyGST':companyGSTFetch,
-                                'companyQuotationNo':quotationNo,
-                                'quotationType':companyQuotationType,
-                                'pricevalidtill':priceValidTill,
-                                'companyGSTApply':gstApply,
-                                'companyPayment':paymentTerms,
-                                'date':formatted_datetime,
-                                'quotationFor':quotationFor,
-                                'deliveryTime':deliveryTime,
-                                'importantNote':importantNote,
+                if data_by_year and data_by_year_difference:
+                    context = {
+                                    'companyName':companyName,
+                                    'companyAddress':companyAddress,
+                                    'companyGST':companyGSTFetch,
+                                    'companyQuotationNo':quotationNo,
+                                    'quotationType':companyQuotationType,
+                                    'pricevalidtill':priceValidTill,
+                                    'companyGSTApply':gstApply,
+                                    'companyPayment':paymentTerms,
+                                    'date':formatted_datetime,
+                                    'quotationFor':quotationFor,
+                                    'deliveryTime':deliveryTime,
+                                    'importantNote':importantNote,
 
-                                # 'totalUnitPriceValue':totalUnitPriceValue,
-                                'gstApply':gstApply,
-                                # 'totalAmount':totalAmount,
-                                
-                                'data_by_year':dict(data_by_year),
-                                'data_by_year_difference': dict(data_by_year_difference),
-                                'unique_year_diffs': sorted(data_by_year_difference.keys()),
-                                'column_names':column_names,
-                                
+                                    # 'totalUnitPriceValue':totalUnitPriceValue,
+                                    'gstApply':gstApply,
+                                    # 'totalAmount':totalAmount,
+                                    
+                                    'data_by_year':dict(data_by_year),
+                                    'data_by_year_difference': dict(data_by_year_difference),
+                                    'unique_year_diffs': sorted(data_by_year_difference.keys()),
+                                    'column_names':column_names,
+                                    
 
-                }
-                print('context:', context)
-                
-                return render(request, 'generateQuotation.html', context)
+                    }
+                    print('context:', context)
+                    
+                    return render(request, 'generateQuotation.html', context)
+                else:
+                    context = {
+                                    'companyName':companyName,
+                                    'companyAddress':companyAddress,
+                                    'companyGST':companyGSTFetch,
+                                    'companyQuotationNo':quotationNo,
+                                    'quotationType':companyQuotationType,
+                                    'pricevalidtill':priceValidTill,
+                                    'companyGSTApply':gstApply,
+                                    'companyPayment':paymentTerms,
+                                    'date':formatted_datetime,
+                                    'quotationFor':quotationFor,
+                                    'deliveryTime':deliveryTime,
+                                    'importantNote':importantNote,
+
+                                    'totalUnitPriceValue':totalUnitPriceValue,
+                                    'gstApply':gstApplied,
+                                    'totalAmount':subTotal,
+                                    'filteredData':filteredData,
+                                    'column_names':column_names,
+                                    
+
+                    }
+                    print('context:', context)
+                    
+                    return render(request, 'generateQuotation.html', context)
             
             elif companyQuotationType == 'BOQ':
                 if 'Lot' in column_names:
@@ -924,7 +1041,7 @@ def generateReviseQuotation(request):
                         groupData[lot]['rowCount'] += 1
 
                     for lot, lotData in groupData.items():
-                        totalAmount = lotData['totalPrice'] * lot
+                        totalAmount = lotData['totalPrice']
                         gst = int(gstApply)/100 * totalAmount
                         total_with_gst = totalAmount + gst
                         
@@ -1045,3 +1162,9 @@ def deleteQuotation(request):
         else:
             return render(request, 'error.html', {'error_message':'No such Quotation exist'})
 
+def getLastQuotation(request):
+    lastQuotation = BOQQuotationTable.objects.order_by('id').last()
+    if lastQuotation:
+        return JsonResponse({'lastQuotation': lastQuotation.quotationNo})
+    else:
+        return JsonResponse({'lastQuotation': None})

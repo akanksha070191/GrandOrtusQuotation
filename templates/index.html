@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="static/css/quotation.css">
+    <link rel="stylesheet" href="static/css/askPrice.css">
     <script src="static/js/validation.js" defer></script>
     <script src="static/js/quotation.js" defer></script>
     <script src="static/js/addNewClient.js" defer></script>
     <script src="static/js/deleteQuotation.js" defer></script>
+    <script src="static/js/getQuotation.js" defer></script>
+    <script src="static/js/askPrice.js" defer></script>
 </head>
 <body class="container">
     <div class="header">
@@ -25,6 +29,7 @@
                 {% comment %} <h1>Add New User</h1> {% endcomment %}
                 <button type="button" class="opt-forButton" id="optForNewUser">Register New Client</button>
                 <button type="button" class="opt-forButton" id="deleteQuotation">Delete Quotation</button>
+                {% comment %} <button type="button" class="opt-forButton" id="askPrice">Ask Price</button> {% endcomment %}
                 
           
 
@@ -51,7 +56,9 @@
             </div>
             <div class="form-item">
                 <label for="userQuotationNo">Quotation No</label>
-                <input type="text" id="userQuotationNo" name="quotationNo" placeholder="enter quotation no" required>    
+                <input type="text" id="userQuotationNo" name="quotationNo" placeholder="enter quotation no" required> 
+                <div></div>
+                <small id="lastQuotationMessage" style="color: gray; display: none;"></small>   
             </div>
             <div class="form-item">
                 <label for="userCompanyPayment">Payment Terms</label>
@@ -79,8 +86,8 @@
                     <option value="default" disabled selected>Select an option</option>
                     <option value="AMC Support">AMC Support</option>
                     <option value="Warrenty/Supply" id="warrenty">Warrenty/Supply</option>
-                    <option value="Subscription/Licence">Subscription/Licence</option>
-                    <option value="BOQ">BOQ</option>
+                    <option value="Subscription/Lisence">Subscription/Lisence</option>
+                    <option value="BOQ" id="boqDisplay">BOQ</option>
                 </select>
             </div>
             <div class="form-item" id="checkboxDisplay">
@@ -99,12 +106,12 @@
                         <label><input type="checkbox" name="columns" value="warrenty"> Warrenty Year</label><br>
                         <label><input type="checkbox" name="columns" value="startDate"> Start Date</label><br>
                         <label><input type="checkbox" name="columns" value="endDate"> End Date</label><br>
-                        <label><input type="checkbox" name="columns" value="instane"> Instane</label><br>
+                        <label><input type="checkbox" name="columns" value="instane"> Model No.</label><br>
                         <label><input type="checkbox" name="columns" value="contractID"> Contract Id</label><br>
-                        <label><input type="checkbox" name="columns" value="units"> Units</label><br>
-                        <label><input type="checkbox" name="columns" value="unitPrice"> UnitPrice</label><br>
-                        <label><input type="checkbox" name="columns" value="margin"> Margin</label><br>
-                        <label><input type="checkbox" name="columns" value="lot"> Lot</label><br>
+                        <label><input type="checkbox" name="columns" value="units">  Units <strong>*</strong></label><br>
+                        <label><input type="checkbox" name="columns" value="unitPrice"> UnitPrice  <strong>*</strong> </label><br>
+                        <label><input type="checkbox" name="columns" value="margin"> Margin <strong>*</strong></label><br>
+                        <label style="display:none;" id="lotDisplay"><input type="checkbox" name="columns" value="lot"> Lot</label><br>
                     </div>
                     <button type="button" id='clearCheckboxBox'>Clear all Checkbox</button>
                 </div>
@@ -126,7 +133,7 @@
                                 <th class="orderID column" style="display:none;">Order ID</th>
                                 <th class="partID column" style="display:none;">Part ID</th>
                                 <th class="contractID column" style="display:none;">Contract Id</th>
-                                <th class="instane column" style="display:none;">Instane</th>
+                                <th class="instane column" style="display:none;">Model No.</th>
                                 {% comment %} <th class="amc column" style="display:none;">AMC Year</th> {% endcomment %}
                                 <th class="warrenty column" style="display:none;">Warrenty Year</th>
                                 {% comment %} <th class="subscription column" style="display:none;">Subscription Year</th> {% endcomment %}
@@ -347,6 +354,81 @@
             </div>
 
         </form>
+        <form class="form5-class" id="form5Class" style="display: none;" action="/askPrice" method="post" autocomplete='off'>
+            {% csrf_token %}
+
+            <div class="form-item" id="checkboxProductDisplay">
+                <h3>Select Product List</h3> 
+                <div class="checkbox-space">
+                    <div id="productList">
+                        <label><input type="checkbox" name="columns" value="Desktop">Desktop</label><br>
+                        <label><input type="checkbox" name="columns" value="Laptop">Laptop</label><br>
+                        <label><input type="checkbox" name="columns" value="Printer">Printer</label><br>
+                        <label><input type="checkbox" name="columns" value="Cartridges">Cartridges</label><br>
+                        <label><input type="checkbox" name="columns" value="computerPeripherals">Computer Peripherals</label><br>
+                        <label><input type="checkbox" name="columns" value="uspBattery">UPS Battery</label><br>
+                        <label><input type="checkbox" name="columns" value="networkingServices">Networking Services</label><br>
+                        <label><input type="checkbox" name="columns" value="infortendStorage">Infortend Storage</label><br>
+                        <label><input type="checkbox" name="columns" value="passiveItem">Passive Items</label><br>
+                        <label><input type="checkbox" name="columns" value="server">Server</label><br>
+                        <label><input type="checkbox" name="columns" value="graphicCard">Graphic Card</label><br>
+                        <label><input type="checkbox" name="columns" value="switches">Switches</label><br>
+                        <label><input type="checkbox" name="columns" value="serverNetworkRack">Server Network Rack</label><br>
+                        <label><input type="checkbox" name="columns" value="intelligentPDU">Intelligent PDUs</label><br>
+                        <label><input type="checkbox" name="columns" value="smartACRack">Smart AC Rack</label><br>
+                        <label><input type="checkbox" name="columns" value="atsSwitch">ATS Switch</label><br>
+                        <label><input type="checkbox" name="columns" value="kvmSwitch">KVM Switch</label><br>
+                        <label><input type="checkbox" name="columns" value="lcdConsole">LCD Console</label><br>
+                        <label><input type="checkbox" name="columns" value="passiveSolution">Passive Solution</label><br>
+                        <label><input type="checkbox" name="columns" value="telephone">Telephone</label><br>
+                        <label><input type="checkbox" name="columns" value="sophos">Sophos</label><br>
+                        <label><input type="checkbox" name="columns" value="HPEServer">HPE Server AMC</label><br>
+                        <label><input type="checkbox" name="columns" value="RedHatServerSubscription">Red Hat Server Subscription</label><br>
+                        <label><input type="checkbox" name="columns" value="Satcom">Satcom</label><br>
+                        <label><input type="checkbox" name="columns" value="HPERenewal">HPE Renewal</label><br>
+                        <label><input type="checkbox" name="columns" value="HPEArubaAP">HPE Aruba AP</label><br>
+                        <label><input type="checkbox" name="columns" value="HPESwitchAP">HPE Switch & AP</label><br>
+                        <label><input type="checkbox" name="columns" value="HPEServer">HPE Server</label><br>
+                        <label><input type="checkbox" name="columns" value="Juniper">Juniper</label><br>
+                        <label><input type="checkbox" name="columns" value="Fortinet">Fortinet</label><br>
+                        <label><input type="checkbox" name="columns" value="Forticare">Forticare</label><br>
+                        <label><input type="checkbox" name="columns" value="Cisco">Cisco</label><br>
+                        <label><input type="checkbox" name="columns" value="SentinelOne">SentinelOne</label><br>
+                        <label><input type="checkbox" name="columns" value="ElectricalItems">Electricals Items</label><br>
+                        <label><input type="checkbox" name="columns" value="MDM">MDM (Mobile Device Management)</label><br>
+                        <label><input type="checkbox" name="columns" value="HitachiStorage">Hitachi Storage</label><br>
+                        <label><input type="checkbox" name="columns" value="Catalyst">Catalyst</label><br>
+                        <label><input type="checkbox" name="columns" value="Storage">Storage</label><br>
+                        <label><input type="checkbox" name="columns" value="Network">Network </label><br>
+                        <label><input type="checkbox" name="columns" value="Firewalls">Firewalls</label><br>
+                        <label><input type="checkbox" name="columns" value="NvidiaGraphicsCard">Nvidia Graphics Card</label><br>
+                        <label><input type="checkbox" name="columns" value="HardDrive">Hard Drive</label><br>
+                        <label><input type="checkbox" name="columns" value="ArconPAM">Arcon PAM</label><br>
+                        <label><input type="checkbox" name="columns" value="DLP">DLP (Data Loss Prevention)</label><br>
+                        <label><input type="checkbox" name="columns" value="HPEAruba">HPE Aruba</label><br>
+                        <label><input type="checkbox" name="columns" value="TapeLibrary">Tape Library</label><br>
+                        <label><input type="checkbox" name="columns" value="CiscoAMC">Cisco AMC</label><br>
+                        <label><input type="checkbox" name="columns" value="Vmware">Vmware</label><br>
+                        <label><input type="checkbox" name="columns" value="CloudComputing">Cloud Computing</label><br>
+                        <label><input type="checkbox" name="columns" value="TowerServer">Tower Server</label><br>
+                        <label><input type="checkbox" name="columns" value="SAN Switch">SAN Switch</label><br>
+
+                        
+
+
+                    </div>
+                    <button type="button" id='clearProductCheckbox'>Clear all Checkbox</button>
+                </div>
+                
+            </div>
+            
+            <div class="footer" id="footerData" style="margin-top: 1.5rem;">
+                <button class="button-style" type"submit">Send Mail</button> 
+                <a class="button-style" href="/logout">LogOut</a>   
+            </div>
+
+        </form>
+
     </div> 
     
     

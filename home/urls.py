@@ -15,4 +15,5 @@ urlpatterns = [
     path('generateReviseQuotationFormat/', views.generateReviseQuotation, name='generateReviseQuotationFormat'),
     path('addNewClient', views.addNewClient, name='addNewClient'),
     path('deleteQuotation', views.deleteQuotation, name='deleteQuotation'),
+    path('getLastQuotation/', views.getLastQuotation, name='getLastQuitation'),
 ]

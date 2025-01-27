@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="static/js/quotation.js" defer></script>
@@ -59,53 +60,97 @@
             </div>
         </div>
         <div class="table_content">
-            {% if quotationType == 'Subscription/Licence' %}
-            {% for year,  data in data_by_year_difference.items %}
-            <table>
-                <thead>
-                    <div class="quotationHeading">
-                        <h2>Quotation for {{ quotationFor }} with {{ quotationType }} of {{ year }} year</h2>
-                    </div>
-                    <tr>
-                        {% for column in column_names %}
-                            <th>{{ column }}</th>
-                        {% endfor %}
-                    </tr>               
-                </thead>
-                <tbody>
-                     {% for row in data.rows %}
-                         <tr>
-                            {% for column in column_names %}
-                                <td>{{ row|get_attr:column }}</td>
-                            {% endfor %}
-                        </tr>
+            {% if quotationType == 'Subscription/Lisence' %}
+                {% if data_by_year_difference.items %}
+                    {% for year,  data in data_by_year_difference.items %}
+                        <table>
+                            <thead>
+                                <div class="quotationHeading">
+                                    <h2>Quotation for {{ quotationFor }} with {{ quotationType }} of {{ year }} year</h2>
+                                </div>
+                                <tr>
+                                    {% for column in column_names %}
+                                        <th>{{ column }}</th>
+                                    {% endfor %}
+                                </tr>               
+                            </thead>
+                            <tbody>
+                                {% for row in data.rows %}
+                                    <tr>
+                                        {% for column in column_names %}
+                                            <td>{{ row|get_attr:column }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %} 
+                            </tbody>
+                        </table> 
+                        
+                        <div class="finalDataBox">
+                            <div class="empty">
+                
+                            </div>
+                            <div class="data">
+                                <div class="final-item">Sub Total Price</div>
+                                <div class="final-item-data">{{ data.subtotal }}</div>
+                                <div class="final-item">GST Extra {{ companyGSTApply }}%</div>
+                                <div class="final-item-data">{{ data.gst }}</div>
+                                <div class="final-item">Total Amount</div>
+                                <div class="final-item-data">{{ data.total_with_gst }}</div>
+                        
+                            </div>               
+                        </div>
+                    {% endfor %}
+                
+                {% elif data_by_year.items %}
+                    {% for year,  data in data_by_year.items  %}
+                    {% for row in data %}
+                        {% if 'USD' in row.USD_Price %}
+                            <table>
+                                <thead>
+                                    <div class="quotationHeading">
+                                        <h2>Quotation for {{ quotationFor }} with {{ quotationType }} of {{ year }} year</h2>
+                                    </div>
+                                    <tr>
+                                        {% for column in column_names %}
+                                            <th>{{ column }}</th>
+                                        {% endfor %}
+                                    </tr>               
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        {% for column in column_names %}
+                                            {% if column == 'Total Amount' %}
+                                                <td>{{ row|get_attr:column }} USD</td>
+                                            {% else %}
+                                                <td>{{ row|get_attr:column }}</td>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tr>
+                                </tbody>
+                            </table> 
+                            <div class="finalDataBox">
+                                <div class="empty">
+                    
+                                </div>
+                                <div class="data">
+                                    <div class="final-item">Sub Total Price</div>
+                                    <div class="final-item-data">{{ data.subtotal }}</div>
+                                    <div class="final-item">GST Extra {{ companyGSTApply }}%</div>
+                                    <div class="final-item-data">{{ data.gst }}</div>
+                                    <div class="final-item">Total Amount</div>
+                                    <div class="final-item-data">{{ data.total_with_gst }}</div>
+                            
+                                </div>               
+                            </div>
+                        {% endif %}
+                
+                    {% endfor %}   
                     {% endfor %} 
-                </tbody>
-            </table> 
-             
-            <div class="finalDataBox">
-                <div class="empty">
-    
-                </div>
-                <div class="data">
-                    <div class="final-item">Sub Total Price</div>
-                    <div class="final-item-data">{{ data.subtotal }}</div>
-                    <div class="final-item">GST Extra {{ companyGSTApply }}%</div>
-                    <div class="final-item-data">{{ data.gst }}</div>
-                    <div class="final-item">Total Amount</div>
-                    <div class="final-item-data">{{ data.total_with_gst }}</div>
-            
-                </div>               
-            </div>
-            {% endfor %}
-
-            {% for year,  data in data_by_year.items  %}
-            {% for row in data %}
-                {% if quotationType == 'Subscription/Licence' and 'USD' in row.USD_Price %}
+                {% else %}
                     <table>
                         <thead>
                             <div class="quotationHeading">
-                                <h2>Quotation for {{ quotationFor }} with {{ quotationType }} of {{ year }} year</h2>
+                                <h2>Quotation for {{ quotationFor }} with {{ quotationType }}</h2>
                             </div>
                             <tr>
                                 {% for column in column_names %}
@@ -114,21 +159,34 @@
                             </tr>               
                         </thead>
                         <tbody>
-                            <tr>
-                                {% for column in column_names %}
-                                    {% if column == 'Total Amount' %}
-                                        <td>{{ row|get_attr:column }} USD</td>
-                                    {% else %}
+                            {% for row in filteredData %}
+                                <tr>
+                                    {% for column in column_names %}
                                         <td>{{ row|get_attr:column }}</td>
-                                    {% endif %}
-                                {% endfor %}
-                            </tr>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %} 
                         </tbody>
                     </table> 
+                    
+                    <div class="finalDataBox">
+                        <div class="empty">
+            
+                        </div>
+                        <div class="data">
+                            <div class="final-item">Sub Total Price</div>
+                            <div class="final-item-data">{{ totalUnitPriceValue }}</div>
+                            <div class="final-item">GST Extra {{ companyGSTApply }}%</div>
+                            <div class="final-item-data">{{ gstApply}}</div>
+                            <div class="final-item">Total Amount</div>
+                            <div class="final-item-data">{{ totalAmount }}</div>
+                    
+                        </div>               
+                    </div>
                 {% endif %}
+
                 
-            {% endfor %}   
-            {% endfor %}   
+                
             {% elif quotationType == 'BOQ' %}
                     {% if groupData %}
                     {% for lot, data in groupData.items  %}
@@ -224,7 +282,7 @@
                     
                         </div>               
                     </div>
-                {% endif %}
+                    {% endif %}
             {% else %}
             <table>
                 <thead>
