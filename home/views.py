@@ -19,6 +19,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import imaplib
 from django.contrib.messages import get_messages
+from cryptography.fernet import Fernet
+import os
+from dotenv import load_dotenv
+from decouple import config
+
 
 
 
@@ -1192,22 +1197,40 @@ def fetchVendors(request):
         return JsonResponse({"vendors": vendor_list}, status=200)
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
-    
-def askPrice(request):
-    from django.core.mail import EmailMessage
-from django.conf import settings
-from django.contrib import messages
-from django.shortcuts import redirect, render
-import smtplib
-import ssl
-import imaplib
-import email
 
 def askPrice(request):
     if request.method == 'POST':
         storage = get_messages(request)  # Clear previous messages
         for _ in storage:
             pass  # Consume messages so they don't persist on refresh
+
+        load_dotenv()
+
+        # Read the encrypted password from the .env file
+        encrypted_password = config('EMAIL_HOST_PASSWORD')
+        print('password', encrypted_password)
+
+        # Load the encryption key (it should be stored securely)
+        with open("secret.key", "rb") as key_file:
+            key = key_file.read()
+        
+        print('Key:', key)
+        # Create a cipher suite using the key
+        cipher_suite = Fernet(key)
+        print('Cypher:',cipher_suite)
+
+        try:
+            encrypted_password_bytes = encrypted_password.encode()  # Ensure it's bytes
+            print('EncryptedPassword:', encrypted_password)
+            decrypted_password = cipher_suite.decrypt(encrypted_password_bytes).decode()  # Decrypt
+            print("Decrypted Password:", decrypted_password)
+        except Exception as e:
+            print(f"Decryption Error: {e}")
+
+        # Decrypt the password
+        decrypted_password = cipher_suite.decrypt(encrypted_password.encode()).decode()
+
+        print("Decrypted Password:", decrypted_password)
 
         try:
             print('Inside askPrice')
@@ -1241,7 +1264,7 @@ def askPrice(request):
             print("Message Body:", message_body)
 
             sender_email = settings.EMAIL_HOST_USER
-            sender_password = settings.EMAIL_HOST_PASSWORD
+            sender_password = decrypted_password
             print("Sender Email:", sender_email)
 
             # Convert email list into an actual list
