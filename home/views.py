@@ -2,16 +2,24 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import authenticate,logout, login
 # from django.contrib.auth.models import User
 from django.contrib import messages
-from .models import LogInUser, BOQQuotationTable, CompanyDetails, clientDetails
+from .models import LogInUser, BOQQuotationTable, CompanyDetails, clientDetails, vendorDetails
 from django.http import HttpResponse, JsonResponse
 from datetime import datetime
 import json
-from django.db import connection
 from collections import defaultdict
-import re
 from decimal import Decimal
 from django.core.cache import cache
 from django.views.decorators.cache import cache_control
+from django.conf import settings
+from email.message import EmailMessage
+import ssl
+import smtplib
+import time
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import imaplib
+from django.contrib.messages import get_messages
+
 
 
 # Create your views here.
@@ -527,9 +535,6 @@ def generate_quotation(request):
             finalTotalPrice_list = []
 
             tableData = zip(itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, units, price, margin)
-            for row in tableData:
-                    if not any(row):  # Skip entirely empty rows
-                        continue
             for itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, units, price, margin in tableData:
                 
                 if not any([itemName, itemDescription, hsn_sac, productSlNo, partNo, orderId, partId, startDate, endDate, instane, contractId, warrentyYear, lots, units, price, margin]):
@@ -821,7 +826,7 @@ def generateReviseQuotation(request):
 
                     totalUnitPrice = int(units) * float(data.newMarginAppliedPrice)
                     data.newMarginPrice = totalUnitPrice
-
+                    data.units = units
                     totalUnitPriceList.append(totalUnitPrice)
                     data.save()
                     print('Data when both margin and price is 0', data.newMarginPrice)
@@ -835,6 +840,7 @@ def generateReviseQuotation(request):
                     data.newMarginAppliedPrice = newPrice
                     print('New Margin price', data.newMarginPrice)
                     totalUnitPriceList.append(totalUnitPrice)
+                    data.units = units
                     data.save()
                     print('Data when both margin is 0', data.newMarginPrice)
 
@@ -853,7 +859,8 @@ def generateReviseQuotation(request):
                     data.newMarginPrice = totalUnitPrice
 
                     totalUnitPriceList.append(totalUnitPrice)
-
+                    data.units = units
+                    
                     data.save()
                     print('Data when both price is 0', data.newMarginPrice)
             
@@ -1165,3 +1172,191 @@ def getLastQuotation(request):
         return JsonResponse({'lastQuotation': lastQuotation.quotationNo})
     else:
         return JsonResponse({'lastQuotation': None})
+    
+def fetchVendors(request):
+    if request.method == 'POST':
+        body = json.loads(request.body)  # Parse the JSON body
+        product_list = body.get('products', [])  # Retrieve the product list
+        print(product_list)
+
+        if not product_list:
+            return JsonResponse({"vendors": [], "error": "No products provided"}, status=400)
+
+        # Query the database for matching products
+        vendors = vendorDetails.objects.filter(product__in=product_list).values("vendorName", "emailID").distinct()
+        
+        # Convert the queryset to a list
+        vendor_list = list(vendors)
+        print(vendor_list)
+        
+        return JsonResponse({"vendors": vendor_list}, status=200)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+    
+def askPrice(request):
+    from django.core.mail import EmailMessage
+from django.conf import settings
+from django.contrib import messages
+from django.shortcuts import redirect, render
+import smtplib
+import ssl
+import imaplib
+import email
+
+def askPrice(request):
+    if request.method == 'POST':
+        storage = get_messages(request)  # Clear previous messages
+        for _ in storage:
+            pass  # Consume messages so they don't persist on refresh
+
+        try:
+            print('Inside askPrice')
+
+            # Extract form data
+            product_list = request.POST.get('productList', '').strip()
+            vendor_mail_list = request.POST.get('mailList', '').strip()
+            additionalSubject = request.POST.get('additionalSubject', '').strip()
+            product = request.POST.get('product', '').strip()
+            quantity = request.POST.get('quantity', '').strip()
+            message_body = request.POST.get('message', '').strip()
+
+            # Convert comma-separated values into lists
+            product_items = [p.strip() for p in product.split('.') if p.strip()]
+            description_items = [d.strip() for d in message_body.split('.') if d.strip()]
+            quantity_items = [q.strip() for q in quantity.split('.') if q.strip()]
+
+            # Ensure every product has a corresponding description
+            max_length = max(len(product_items), len(description_items), len(quantity_items))
+
+            # Pad the description list with "N/A" if it's shorter than the product list
+            while len(description_items) < len(product_items):
+                description_items.append("N/A")
+                
+
+
+            # Ensure equal rows (if descriptions are missing, fill them with "N/A")
+            rows = zip(product_items, description_items, quantity_items)
+
+
+            print("Message Body:", message_body)
+
+            sender_email = settings.EMAIL_HOST_USER
+            sender_password = settings.EMAIL_HOST_PASSWORD
+            print("Sender Email:", sender_email)
+
+            # Convert email list into an actual list
+            recipient_list = [email.strip() for email in vendor_mail_list.split(',') if email.strip()]
+            print("Recipient List:", recipient_list)
+
+            bcc_email = "pricing@grandortus.com"
+
+            # Validate email list
+            if not recipient_list:
+                messages.error(request, "No valid recipient emails provided.")
+                return redirect('/')
+
+            subject = f"Request for Price Inquiry | {additionalSubject}" if additionalSubject else "Request for Price Inquiry"
+
+            # HTML Email Body using f-string
+            email_body = f"""
+            <html>
+                <head>
+                    <style>
+                        body {{
+                            font-family: Arial, sans-serif;
+                        }}
+                        .container {{
+                            padding: 10px;
+                            border: 1px solid #ddd;
+                            border-radius: 5px;
+                            background-color: #f9f9f9;
+                            width: 100%;
+                        }}
+                        h2 {{
+                            color: #333;
+                        }}
+                        table {{
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 10px;
+                            background-color: #fff;
+                        }}
+                        th, td {{
+                            border: 1px solid #ddd;
+                            padding: 10px;
+                            text-align: left;
+                        }}
+                        th {{
+                            background-color: #f2f2f2;
+                        }}
+                        .footer {{
+                            margin-top: 20px;
+                            font-size: 14px;
+                            color: #777;
+                        }}
+                    </style>
+                </head>
+                <body>
+                    <p>Hi,</p>
+                    <p>Hope this mail finds you well.</p>
+                    <p>Please share the best price of the following:</p>
+                    <div class="container">
+                        <h2>Price Inquiry Request</h2>
+                        <table>
+                            <tr>
+                                <th>Product</th>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                            </tr>
+                            {''.join(f'<tr><td>{product.strip()}</td><td>{description.strip()}</td><td>{quantity.strip()}</td></tr>' for product, description,quantity in rows)}
+                        </table>
+                        <div class="footer">
+                            <p>Best Regards,</p>
+                            <p>{sender_email}</p>
+                        </div>
+                    </div>
+                </body>
+            </html>
+            """
+
+            # SMTP Email Sending with HTML formatting
+            context = ssl.create_default_context()
+            with smtplib.SMTP("mail.grandortus.com", 587) as server:
+                server.starttls(context=context)
+                server.login(sender_email, sender_password)
+
+                for recipient in recipient_list:
+                    msg = MIMEMultipart()
+                    msg["From"] = sender_email
+                    msg["To"] = recipient
+                    msg["CC"] = bcc_email
+                    msg["Subject"] = subject
+
+                    # Attach HTML content
+                    msg.attach(MIMEText(email_body, "html"))
+
+                    # Send Email
+                    server.sendmail(sender_email, [recipient, bcc_email], msg.as_string())
+
+                
+
+            # Save a copy in Sent folder (IMAP)
+            try:
+                mail = imaplib.IMAP4_SSL("mail.grandortus.com")
+                mail.login(sender_email, sender_password)
+                mail.append("Sent", "\\Seen", imaplib.Time2Internaldate(time.time()), msg.as_string().encode('utf8'))
+                mail.logout()
+                print("Email saved in Sent folder")
+            except Exception as imap_error:
+                print(f"Could not save email in Sent folder: {imap_error}")
+
+            messages.success(request, "Email sent successfully!")
+
+        except Exception as e:
+            import traceback
+            print("Email Error Traceback:", traceback.format_exc())
+            messages.error(request, f"Error sending email: {str(e)}")
+
+        return redirect('/')  # Redirect after sending
+
+    return render(request, 'index.html')

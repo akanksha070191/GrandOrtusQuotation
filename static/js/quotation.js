@@ -437,7 +437,7 @@ function newUpdatedTable(quotationDataNew){
                 <td>${item['SL No.'] || 'N/A'}</td>
                 <td>${item['Item Name'] || 'N/A'}</td>
                 <td>${item['Item Description'] || 'N/A'}</td>
-                <td>${item['Units'] || 'N/A'}</td>
+                <td contenteditable="true">${item['Units'] || 'N/A'}</td>
                 <td>${item['Cost Price'] || 'N/A'}</td>
                 <td>${item['Old Margin'] || 'N/A'}</td>
                 <td>${item['Price'] || 'N/A'}</td>
@@ -448,47 +448,6 @@ function newUpdatedTable(quotationDataNew){
                 </td>
             `;
             quotationTableData.appendChild(tableRow);
-
-                // const cell0 = document.createElement("td");
-                // cell0.textContent = item['SL No.'] || 'N/A';
-                // tableRow.appendChild(cell0);
-
-                // const cell1 = document.createElement("td");
-                // cell1.textContent = item['Item Name'] || 'N/A';
-                // tableRow.appendChild(cell1);
-
-                // const cell2 = document.createElement("td");
-                // cell2.textContent = item['Item Description'] || 'N/A';
-                // tableRow.appendChild(cell2);
-
-                // const cell3 = document.createElement("td");
-                // cell3.textContent = item['Units'] || 'N/A';
-                // tableRow.appendChild(cell3);
-
-                // const cell4 = document.createElement("td");
-                // cell4.textContent = item['Cost Price'] || 'N/A';
-                // tableRow.appendChild(cell4);
-
-                // const cell5 = document.createElement("td");
-                // cell5.textContent = item['Old Margin'] || 'N/A';
-                // tableRow.appendChild(cell5);
-                
-                // const cell6 = document.createElement("td");
-                // cell6.textContent = item['Price'] || 'N/A';
-                // tableRow.appendChild(cell6);
-
-                // const cell7 = document.createElement("td");
-                // cell7.contentEditable = "true";
-                // cell7.textContent = '';
-                // tableRow.appendChild(cell7);
-
-                // const cell8 = document.createElement("td");
-                // cell8.contentEditable = "true";
-                // cell8.textContent = '';
-                // tableRow.appendChild(cell8);
-
-                // quotationTableData.appendChild(tableRow);
-
             });
         } else {
                 const tableRow = document.createElement("tr");
@@ -498,7 +457,7 @@ function newUpdatedTable(quotationDataNew){
                 <td>${item['SL No.'] || 'N/A'}</td>
                 <td>${item['Item Name'] || 'N/A'}</td>
                 <td>${item['Item Description'] || 'N/A'}</td>
-                <td>${item['Units'] || 'N/A'}</td>
+                <td contenteditable="true">${item['Units'] || 'N/A'}</td>
                 <td>${item['Cost Price'] || 'N/A'}</td>
                 <td>${item['Old Margin'] || 'N/A'}</td>
                 <td>${item['Price'] || 'N/A'}</td>
@@ -509,47 +468,6 @@ function newUpdatedTable(quotationDataNew){
                 </td>
             `;
             quotationTableData.appendChild(tableRow);
-
-                // const cell0 = document.createElement("td");
-                // cell0.textContent = item['SL No.'] || 'N/A';
-                // tableRow.appendChild(cell0);
-
-                // const cell1 = document.createElement("td");
-                // cell1.textContent = item['Item Name'] || 'N/A';
-                // tableRow.appendChild(cell1);
-
-                // const cell2 = document.createElement("td");
-                // cell2.textContent = item['Item Description'] || 'N/A';
-                // tableRow.appendChild(cell2);
-
-                // const cell3 = document.createElement("td");
-                // cell3.textContent = item['Units'] || 'N/A';
-                // tableRow.appendChild(cell3);
-
-                // const cell4 = document.createElement("td");
-                // cell4.textContent = item['Cost Price'] || 'N/A';
-                // tableRow.appendChild(cell4);
-
-                // const cell5 = document.createElement("td");
-                // cell5.textContent = item['Old Margin'] || 'N/A';
-                // tableRow.appendChild(cell5);
-                
-                // const cell6 = document.createElement("td");
-                // cell6.textContent = item['Price'] || 'N/A';
-                // tableRow.appendChild(cell6);
-
-                // const cell7 = document.createElement("td");
-                // cell7.contentEditable = "true";
-                // cell7.textContent = '';
-                // tableRow.appendChild(cell7);
-
-                // const cell8 = document.createElement("td");
-                // cell8.contentEditable = "true";
-                // cell8.textContent = '';
-                // tableRow.appendChild(cell8);
-
-                // quotationTableData.appendChild(tableRow);
-
         }
 
         

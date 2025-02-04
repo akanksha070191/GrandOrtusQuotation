@@ -16,6 +16,13 @@
 </head>
 <body class="container">
     <div class="header">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" style="font-size: 15px; color: darkcyan; margin-bottom: 10px; font-weight: bold;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
         <h1>
             Welcome <strong>{{ username }}!!</strong>
         </h1> 
@@ -29,7 +36,7 @@
                 {% comment %} <h1>Add New User</h1> {% endcomment %}
                 <button type="button" class="opt-forButton" id="optForNewUser">Register New Client</button>
                 <button type="button" class="opt-forButton" id="deleteQuotation">Delete Quotation</button>
-                {% comment %} <button type="button" class="opt-forButton" id="askPrice">Ask Price</button> {% endcomment %}
+                <button type="button" class="opt-forButton" id="askPrice">Ask Price</button>
                 
           
 
@@ -358,72 +365,133 @@
             {% csrf_token %}
 
             <div class="form-item" id="checkboxProductDisplay">
-                <h3>Select Product List</h3> 
-                <div class="checkbox-space">
-                    <div id="productList">
-                        <label><input type="checkbox" name="columns" value="Desktop">Desktop</label><br>
-                        <label><input type="checkbox" name="columns" value="Laptop">Laptop</label><br>
-                        <label><input type="checkbox" name="columns" value="Printer">Printer</label><br>
-                        <label><input type="checkbox" name="columns" value="Cartridges">Cartridges</label><br>
-                        <label><input type="checkbox" name="columns" value="computerPeripherals">Computer Peripherals</label><br>
-                        <label><input type="checkbox" name="columns" value="uspBattery">UPS Battery</label><br>
-                        <label><input type="checkbox" name="columns" value="networkingServices">Networking Services</label><br>
-                        <label><input type="checkbox" name="columns" value="infortendStorage">Infortend Storage</label><br>
-                        <label><input type="checkbox" name="columns" value="passiveItem">Passive Items</label><br>
-                        <label><input type="checkbox" name="columns" value="server">Server</label><br>
-                        <label><input type="checkbox" name="columns" value="graphicCard">Graphic Card</label><br>
-                        <label><input type="checkbox" name="columns" value="switches">Switches</label><br>
-                        <label><input type="checkbox" name="columns" value="serverNetworkRack">Server Network Rack</label><br>
-                        <label><input type="checkbox" name="columns" value="intelligentPDU">Intelligent PDUs</label><br>
-                        <label><input type="checkbox" name="columns" value="smartACRack">Smart AC Rack</label><br>
-                        <label><input type="checkbox" name="columns" value="atsSwitch">ATS Switch</label><br>
-                        <label><input type="checkbox" name="columns" value="kvmSwitch">KVM Switch</label><br>
-                        <label><input type="checkbox" name="columns" value="lcdConsole">LCD Console</label><br>
-                        <label><input type="checkbox" name="columns" value="passiveSolution">Passive Solution</label><br>
-                        <label><input type="checkbox" name="columns" value="telephone">Telephone</label><br>
-                        <label><input type="checkbox" name="columns" value="sophos">Sophos</label><br>
-                        <label><input type="checkbox" name="columns" value="HPEServer">HPE Server AMC</label><br>
-                        <label><input type="checkbox" name="columns" value="RedHatServerSubscription">Red Hat Server Subscription</label><br>
-                        <label><input type="checkbox" name="columns" value="Satcom">Satcom</label><br>
-                        <label><input type="checkbox" name="columns" value="HPERenewal">HPE Renewal</label><br>
-                        <label><input type="checkbox" name="columns" value="HPEArubaAP">HPE Aruba AP</label><br>
-                        <label><input type="checkbox" name="columns" value="HPESwitchAP">HPE Switch & AP</label><br>
-                        <label><input type="checkbox" name="columns" value="HPEServer">HPE Server</label><br>
-                        <label><input type="checkbox" name="columns" value="Juniper">Juniper</label><br>
-                        <label><input type="checkbox" name="columns" value="Fortinet">Fortinet</label><br>
-                        <label><input type="checkbox" name="columns" value="Forticare">Forticare</label><br>
-                        <label><input type="checkbox" name="columns" value="Cisco">Cisco</label><br>
-                        <label><input type="checkbox" name="columns" value="SentinelOne">SentinelOne</label><br>
-                        <label><input type="checkbox" name="columns" value="ElectricalItems">Electricals Items</label><br>
-                        <label><input type="checkbox" name="columns" value="MDM">MDM (Mobile Device Management)</label><br>
-                        <label><input type="checkbox" name="columns" value="HitachiStorage">Hitachi Storage</label><br>
-                        <label><input type="checkbox" name="columns" value="Catalyst">Catalyst</label><br>
-                        <label><input type="checkbox" name="columns" value="Storage">Storage</label><br>
-                        <label><input type="checkbox" name="columns" value="Network">Network </label><br>
-                        <label><input type="checkbox" name="columns" value="Firewalls">Firewalls</label><br>
-                        <label><input type="checkbox" name="columns" value="NvidiaGraphicsCard">Nvidia Graphics Card</label><br>
-                        <label><input type="checkbox" name="columns" value="HardDrive">Hard Drive</label><br>
-                        <label><input type="checkbox" name="columns" value="ArconPAM">Arcon PAM</label><br>
-                        <label><input type="checkbox" name="columns" value="DLP">DLP (Data Loss Prevention)</label><br>
-                        <label><input type="checkbox" name="columns" value="HPEAruba">HPE Aruba</label><br>
-                        <label><input type="checkbox" name="columns" value="TapeLibrary">Tape Library</label><br>
-                        <label><input type="checkbox" name="columns" value="CiscoAMC">Cisco AMC</label><br>
-                        <label><input type="checkbox" name="columns" value="Vmware">Vmware</label><br>
-                        <label><input type="checkbox" name="columns" value="CloudComputing">Cloud Computing</label><br>
-                        <label><input type="checkbox" name="columns" value="TowerServer">Tower Server</label><br>
-                        <label><input type="checkbox" name="columns" value="SAN Switch">SAN Switch</label><br>
-
-                        
-
-
-                    </div>
-                    <button type="button" id='clearProductCheckbox'>Clear all Checkbox</button>
+                <h2>Select Product List</h3> 
+                <div class="dropdown-space">
+                    <select id="productDropdown" name="product" multiple size="10">
+                        <option value="Desktop">Desktop</option>
+                        <option value="Laptop">Laptop</option>
+                        <option value="Printer">Printer</option>
+                        <option value="Cartridges">Cartridges</option>
+                        <option value="Computer Peripherals">Computer Peripherals</option>
+                        <option value="UPS Battery">UPS Battery</option>
+                        <option value="Networking Services">Networking Services</option>
+                        <option value="Infortrend Storage">Infortend Storage</option>
+                        <option value="Passive Items">Passive Items</option>
+                        <option value="Server">Server</option>
+                        <option value="Server (Dell,HPE,Lenovo,etc.)">Server (Dell,HPE,Lenovo,etc.)</option>
+                        <option value="Graphics Card">Graphic Card</option>
+                        <option value="Switches">Switches</option>
+                        <option value="Server Network Racks">Server Network Rack</option>
+                        <option value="Intelligent PDUs">Intelligent PDUs</option>
+                        <option value="Smart AC Rack">Smart AC Rack</option>
+                        <option value="ATS Switch">ATS Switch</option>
+                        <option value="KVM Switch">KVM Switch</option>
+                        <option value="LCD Console">LCD Console</option>
+                        <option value="Passive Solutions">Passive Solution</option>
+                        <option value="Desktop, Telephone">Desktop, Telephone</option>
+                        <option value="Sophos">Sophos</option>
+                        <option value="HPE Server AMC">HPE Server AMC</option>
+                        <option value="Passive Item">Passive Item</option>
+                        <option value="Red Hat Server Subscription">Red Hat Server Subscription</option>
+                        <option value="Satcom">Satcom</option>
+                        <option value="HPE Renewal">HPE Renewal</option>
+                        <option value="HPE Aruba AP">HPE Aruba AP</option>
+                        <option value="HPE Switch & AP">HPE Switch & AP</option>
+                        <option value="HPE Server">HPE Server</option>
+                        <option value="Juniper">Juniper</option>
+                        <option value="Fortinet">Fortinet</option>
+                        <option value="Forticare">Forticare</option>
+                        <option value="Cisco">Cisco</option>
+                        <option value="SentinelOne">SentinelOne</option>
+                        <option value="Electrical Items">Electrical Items</option>
+                        <option value="Passive Items">Passive Items</option>
+                        <option value="Hitachi Storage">Hitachi Storage</option>
+                        <option value="Catalyst">Catalyst</option>
+                        <option value="Storage">Storage</option>
+                        <option value="Network">Network</option>
+                        <option value="Firewalls">Firewalls</option>
+                        <option value="Nvidia Graphics Card">Nvidia Graphics Card</option>
+                        <option value="Hard Drive">Hard Drive</option>
+                        <option value="Arcon PAM">Arcon PAM</option>
+                        <option value="DLP (Data Loss Prevention)">DLP (Data Loss Prevention)</option>
+                        <option value="HPE Aruba">HPE Aruba</option>
+                        <option value="Tape Library">Tape Library</option>
+                        <option value="Cisco AMC">Cisco AMC</option>
+                        <option value="Vmware">Vmware</option>
+                        <option value="Cloud Computing">Cloud Computing</option>
+                        <option value="Tower Server">Tower Server</option>
+                        <option value="SAN Switch">SAN Switch</option>
+                        <option value="Product A">Product A</option>
+                        <option value="Product B">Product B</option>
+                        <option value="Product C">Product C</option>
+                        <option value="Product D">Product D</option>
+                        <option value="Product AA">Product AA</option>
+                        <option value="Product R">Product R</option>
+                    </select>
+                    <button type="button" id="clearProductDropdown">Clear Selection</button>
                 </div>
+
+                <h2 style="margin-top:3px;">Select Vendor List</h3> 
+                <div class="checkbox-space">
+                    <div id="vendorList">
+                        <ul id="vendors"></ul>
+                    </div>
+                    {% comment %} <button type="button" id='clearProductCheckbox'>Clear all Checkbox</button> {% endcomment %}
+                </div>
+
+                <h2 style="margin-top:10px;">Some more information needed</h3>
+                <div>
+
+                </div>
+                <div class="form-item">
+                    <label for="productList">Product List</label>
+                    <input type="text" id="productList" name="productList" placeholder="Product list" required>
+                </div>
+                <div>
+
+                </div>
+                <div class="form-item">
+                    <label for="vendorMailList">Mail ID List</label>
+                    <input type="text" id="vendorMailList" name="mailList" placeholder="vendor mail list" required>
+                </div>
+                <div>
+
+                </div>
+                <div class="form-item">
+                    <label for="vendorAdditionalSubject">Additional Subject</label>
+                    <input type="text" id="vendorAdditionalSubject" name="additionalSubject" placeholder="write additional subject">
+                </div>
+                <div>
+
+                </div>
+                <div class="form-item">
+                    <label for="product">Product</label>
+                    <textarea class="fixed-textarea" name="product" id="product" cols="4" rows="50" placeholder="product here with a fullstop for next product to differenciate"></textarea>
+                </div>
+
+                <div>
+
+                </div>
+                <div class="form-item">
+                    <label for="quantity">Product Quantity</label>
+                    {% comment %} <input type="text" id="quantity" name="quantity" placeholder="enter quantity" required> {% endcomment %}
+                    <textarea class="fixed-textarea" name="quantity" id="quantity" cols="4" rows="50" placeholder="product quantity with a fullstop for next product to differenciate"></textarea>
+                </div>
+                <div>
+
+                </div>
+                
+                <div class="form-item">
+                    <label for="vendorMessage">Product Description </label>
+                    <textarea class="fixed-textarea" id="vendorMessage" name="message" rows="4" cols="50" placeholder="your description here...with a fullstop for next product to differenciate"></textarea>
+                </div>
+
+
                 
             </div>
             
             <div class="footer" id="footerData" style="margin-top: 1.5rem;">
-                <button class="button-style" type"submit">Send Mail</button> 
+                <button class="button-style" type="submit">Send Mail</button> 
                 <a class="button-style" href="/logout">LogOut</a>   
             </div>
 
@@ -431,7 +499,13 @@
 
     </div> 
     
-    
+  <script>
+    // Automatically hide messages after 5 seconds
+    setTimeout(function() {
+        let messages = document.querySelectorAll('.alert');
+        messages.forEach(msg => msg.style.display = 'none');
+    }, 5000);
+</script>  
     
 </body>
 </html>

@@ -19,19 +19,91 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-document.getElementById('clearProductCheckbox').addEventListener('click', function(){
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    console.log(checkboxes)
-    checkboxes.forEach(checkbox => {
-            checkbox.checked = false;
-            selectedColumns.clear();
-            // columnOrder.forEach(columnClass => {
-            //     const elements = document.querySelectorAll('.' + columnClass);
-            //     elements.forEach(el => el.style.display = 'none'); // Hide all columns and data
-                // document.getElementById('boqFormTableBody').innerHTML = '';
-                // existingRows = [];
-                // rowCount = 0;
-            // });
-        
+document.getElementById('clearProductDropdown').addEventListener('click', function () {
+    // Get the dropdown element
+    const productDropdown = document.getElementById('productDropdown');
+
+    // Deselect all options in the dropdown
+    Array.from(productDropdown.options).forEach(option => (option.selected = false));
+
+    // Clear the product list input field
+    document.getElementById('productList').value = '';
+
+    // Clear the vendor list
+    const vendorList = document.getElementById('vendors');
+    vendorList.innerHTML = '<li>No vendors selected</li>';
+
+    // Clear the vendor mail list input field
+    document.getElementById('vendorMailList').value = '';
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const productDropdown = document.getElementById('productDropdown');
+    const vendorList = document.getElementById('vendors');
+
+    // Update productList input on selection change
+    productDropdown.addEventListener('change', function () {
+        const selectedOptions = Array.from(productDropdown.selectedOptions).map(option => option.value);
+        document.getElementById('productList').value = selectedOptions.join(', ');
+
+        // Fetch vendors for selected products
+        fetch('/fetchVendors/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken(),
+            },
+            body: JSON.stringify({ products: selectedOptions }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            vendorList.innerHTML = ''; // Clear existing vendors
+
+            if (data.vendors.length > 0) {
+                data.vendors.forEach(vendor => {
+                    const label = document.createElement('label');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = vendor.emailID;
+
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(` ${vendor.vendorName} - ${vendor.emailID}`));
+
+                    // Add event listener for email selection
+                    checkbox.addEventListener('change', function () {
+                        const selectedEmails = Array.from(vendorList.querySelectorAll('input[type="checkbox"]:checked'))
+                            .map(cb => cb.value);
+                        document.getElementById('vendorMailList').value = selectedEmails.join(', ');
+                    });
+
+                    vendorList.appendChild(label);
+                });
+            } else {
+                vendorList.innerHTML = '<li>No vendors found</li>';
+            }
+        })
+        .catch(error => console.error('Error fetching vendors:', error));
+    });
+
+    // Clear product dropdown selection
+    document.getElementById('clearProductDropdown').addEventListener('click', function () {
+        Array.from(productDropdown.options).forEach(option => (option.selected = false));
+        document.getElementById('productList').value = ''; // Clear product list input
     });
 });
+
+function getCSRFToken() {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith('csrftoken=')) {
+                cookieValue = decodeURIComponent(cookie.substring('csrftoken='.length));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

@@ -16,4 +16,6 @@ urlpatterns = [
     path('addNewClient', views.addNewClient, name='addNewClient'),
     path('deleteQuotation', views.deleteQuotation, name='deleteQuotation'),
     path('getLastQuotation/', views.getLastQuotation, name='getLastQuitation'),
+    path('fetchVendors/', views.fetchVendors, name='fetchVendors'),
+    path('askPrice', views.askPrice, name='askPrice'),
 ]

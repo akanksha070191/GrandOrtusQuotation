@@ -85,3 +85,20 @@ class BOQQuotationTable(models.Model):
     def __str__(self):
         return f"{self.itemName}"
     
+
+class vendorDetails(models.Model):
+    SlNo = models.AutoField(primary_key=True)
+    vendorName = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, null=True)
+    product = models.CharField(max_length=255, null=True)
+    contactName = models.CharField(max_length=255, null=True)
+    number = models.CharField(max_length=255, null=True)
+    emailID = models.CharField(max_length=255, null=True)
+    
+
+    class Meta:
+        managed = False  # Prevent Django from trying to create/update this table
+        db_table = 'vendorDetails'  # The name of the existing table in the database
+
+    
+    
